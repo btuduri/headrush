@@ -1,0 +1,1 @@
+<Project name="HeadRoll"><Folder name="include"><File path="source\Control.h"></File><File path="source\Globals.h"></File></Folder><Folder name="source"><File path="source\Main.cpp"></File><File path="source\Control.cpp"></File><File path="source\Globals.cpp"></File></Folder><File path="Makefile"></File></Project>
