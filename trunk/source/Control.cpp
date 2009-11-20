@@ -7,7 +7,7 @@
 #include "Globals.h"
 #include "Control.h"
 
-void controlHead()
+void controlHead()					// *TO DO* make this work for all balls (even Normals)
 {
 	scanKeys();						// Read button data
 	
@@ -85,7 +85,7 @@ else if (pBall->X < 0 )
 	// we should let detection handle falling, ie. if there is no floor, accelerate down until there is
 	//
 	
-	if ((pBall->Status == JUMPING) && (pBall->YSpeed < 0)) // WHY!! do i have to use double ==
+	if ((pBall->Status == JUMPING || pBall->Status == GROUNDTOUCH) && (pBall->YSpeed < 0)) // WHY!! do i have to use double ==
 	{
 		pBall->Y += pBall->YSpeed;
 		
@@ -95,11 +95,15 @@ else if (pBall->X < 0 )
 		{
 		pBall->Status = FALLING;
 		}
+		else
+		{
+		pBall->Status = JUMPING;
+		}
 	}
 	// ok, now we need to check if there is ground below the ball (for now if Y<192-32)
 	// and if so, set status to falling and fall (he says with such confidence!!)
 	
-	else			// only need to worry about this if status is not JUMPING
+	else	// only need to worry about this if status is not JUMPING
 	
 	{
 		if (pBall->Y < 192-32)	// this would be replaced with a check for floor!
@@ -108,17 +112,17 @@ else if (pBall->X < 0 )
 			pBall->Y += pBall->YSpeed;
 			pBall->Status = FALLING;
 			
-			if ((pBall->Y > 192-32) && (pBall->YSpeed < 1.75))
+			if ((pBall->Y > 192-32) && (pBall->YSpeed < BOUNCEFACTOR))
 			{
 				pBall->Y = 192-32;
 				pBall->YSpeed = 0;
 				pBall->Status = NORMAL;
 			}
-			else if ((pBall->Y > 192-32) && (pBall->YSpeed > 1.75))
+			else if ((pBall->Y > 192-32) && (pBall->YSpeed > BOUNCEFACTOR))
 			{
 				pBall->Y = 192-32;
-				pBall->YSpeed = -(pBall->YSpeed/1.55);
-				pBall->Status = JUMPING;
+				pBall->YSpeed = -(pBall->YSpeed / BOUNCEFACTORAMOUNT);
+				pBall->Status = GROUNDTOUCH;
 			}		
 		}
 	}
@@ -131,7 +135,9 @@ else if (pBall->X < 0 )
 	
 };
 
-
+//
+// Calculate rotation based on horizontal movement
+//
 float rotateHead(float originalX, float currentX)	// our rotation function
 {
 
