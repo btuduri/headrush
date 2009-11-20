@@ -48,13 +48,14 @@ int main(void)
 	g_playerBall.Y = 192-32;
 	g_playerBall.Angle = 0;
 	g_playerBall.Status = NORMAL;
+	g_playerBall.Type = PLAYER;
 
 	while(1)
 	{
 		// controlHead; You forgot the parenthesis here
 		controlHead();
 		
-		moveHead();
+		moveHead(&g_playerBall);	// call moveHead with the address of the class g_playerBall
 		
 		// Draw sprites
 		oamRotateScale(&oamSub, 0, g_playerBall.Angle, intToFixed(1, 8), intToFixed(1, 8));
@@ -67,8 +68,6 @@ int main(void)
 		// Update temp oam to real oam (must be done during a vblank so it's put here just under the vblank wait)
 		oamUpdate(&oamMain);
 		oamUpdate(&oamSub);
-		
-		
 	}
 
 	// Will never reach here
