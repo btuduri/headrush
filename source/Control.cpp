@@ -52,13 +52,10 @@ void controlHead()
 	// now we need to check for a jump and init is possible
 	// check players status for the setting of jump, and if true, donot init untill false
 
-	if (held & KEY_A)
+	if ((held & KEY_A) && (g_playerBall.Status != JUMPING && g_playerBall.Status != FALLING))
 	{
-		if (g_playerBall.Status != JUMPING)
-		{
-			g_playerBall.Status = JUMPING;
-			g_playerBall.YSpeed = -JUMPSPEED;
-		}
+		g_playerBall.Status = JUMPING;
+		g_playerBall.YSpeed = -JUMPSPEED;
 	}
 };
 
@@ -83,59 +80,68 @@ else if (pBall->X < 0 )
 		pBall->XSpeed = abs(pBall->XSpeed / BOUNCE_X_DEADEN);
 	}
 	
-	// Now we need to rotate the head, based on our movement!
-	// using rotateHead to pass, initialX, and currentX to return the angle!
-	// wow!! It worked!
-	pBall->Angle += rotateHead(oldBallX, pBall->X);
-	
 	// ok, now account for the jump, this needs to check Status and see if we are jumping
+	// but... It only really needs to work with upward movement!
+	// we should let detection handle falling, ie. if there is no floor, accelerate down until there is
+	//
 	
-	if (pBall->Status == JUMPING)
+	if ((pBall->Status == JUMPING) && (pBall->YSpeed < 0)) // WHY!! do i have to use double ==
 	{
 		pBall->Y += pBall->YSpeed;
 		
 		pBall->YSpeed += GRAVITY;
 		
-		if (pBall->Y > 192-32)
+		if ( pBall->YSpeed > 0)
 		{
-			if (pBall->YSpeed > 1.75)
-			{
-				if (pBall->Y > 192-32)
-				{
-					pBall->Y = 192-32;
-					int held = keysHeld();
-					if (held & KEY_A)
-					{
-						pBall->Status = NORMAL;
-					}
-				}
-					
-			{
-			}
-				pBall->YSpeed = -(pBall->YSpeed/1.55);
-				pBall->Y = 192-32;
-				
-			}
-			else
-			{
-				pBall->Y = 192-32;
-				pBall->Status = NORMAL;
-			}
+		pBall->Status = FALLING;
 		}
 	}
+	// ok, now we need to check if there is ground below the ball (for now if Y<192-32)
+	// and if so, set status to falling and fall (he says with such confidence!!)
+	
+	else			// only need to worry about this if status is not JUMPING
+	
+	{
+		if (pBall->Y < 192-32)	// this would be replaced with a check for floor!
+		{
+			pBall->YSpeed += GRAVITY;
+			pBall->Y += pBall->YSpeed;
+			pBall->Status = FALLING;
+			
+			if ((pBall->Y > 192-32) && (pBall->YSpeed < 1.75))
+			{
+				pBall->Y = 192-32;
+				pBall->YSpeed = 0;
+				pBall->Status = NORMAL;
+			}
+			else if ((pBall->Y > 192-32) && (pBall->YSpeed > 1.75))
+			{
+				pBall->Y = 192-32;
+				pBall->YSpeed = -(pBall->YSpeed/1.55);
+				pBall->Status = JUMPING;
+			}		
+		}
+	}
+	
+	// Now we need to rotate the head, based on our movement!
+	// using rotateHead to pass, initialX, and currentX to return the angle!
+	// wow!! It worked!
+	
+	pBall->Angle += rotateHead(oldBallX, pBall->X);
+	
 };
 
 
-float rotateHead(float fromX, float toX)	// our rotation function
+float rotateHead(float originalX, float currentX)	// our rotation function
 {
 
-	if (toX < fromX)
+	if (currentX < originalX)
 	{
-		return degreesToAngle((fromX - toX) * 4);
+		return degreesToAngle((originalX - currentX) * 4);
 	}
-	else if (fromX < toX)
+	else if (originalX < currentX)
 	{
-		return -degreesToAngle((toX - fromX) * 4);
+		return -degreesToAngle((currentX - originalX) * 4);
 	}
 	return 0;
 }
