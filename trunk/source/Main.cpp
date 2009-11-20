@@ -49,6 +49,7 @@ int main(void)
 	g_playerBall.Angle = 0;
 	g_playerBall.Status = NORMAL;
 	g_playerBall.Type = PLAYER;
+	g_playerBall.YSpeed = 0;
 
 	while(1)
 	{

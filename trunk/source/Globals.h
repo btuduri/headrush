@@ -26,6 +26,7 @@ struct Ball
 	
 #define		NORMAL				0
 #define		JUMPING				1
+#define		FALLING				2
 
 	//	Defines for the balls type
 	
