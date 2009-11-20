@@ -66,71 +66,63 @@ void controlHead()
 // moveHead move the head! (simple!)
 // perhaps?
 
-void moveHead()
+void moveHead(Ball* pBall)
 {
-float playerBallX = g_playerBall.X;
+float oldBallX = pBall->X;
 
-g_playerBall.X = g_playerBall.X + g_playerBall.XSpeed;
+pBall->X = pBall->X + pBall->XSpeed;
 
-if (g_playerBall.X > 256-32 )
+if (pBall->X > 256-32 )
 	{
-		g_playerBall.X = 256-32;
-		g_playerBall.XSpeed = -abs(g_playerBall.XSpeed / BOUNCE_X_DEADEN);
+		pBall->X = 256-32;
+		pBall->XSpeed = -abs(pBall->XSpeed / BOUNCE_X_DEADEN);
 	}
-else if (g_playerBall.X < 0 )
+else if (pBall->X < 0 )
 	{
-		g_playerBall.X = 0;
-		g_playerBall.XSpeed = abs(g_playerBall.XSpeed / BOUNCE_X_DEADEN);
+		pBall->X = 0;
+		pBall->XSpeed = abs(pBall->XSpeed / BOUNCE_X_DEADEN);
 	}
 	
 	// Now we need to rotate the head, based on our movement!
 	// using rotateHead to pass, initialX, and currentX to return the angle!
 	// wow!! It worked!
-	g_playerBall.Angle += rotateHead(playerBallX, g_playerBall.X);
+	pBall->Angle += rotateHead(oldBallX, pBall->X);
 	
 	// ok, now account for the jump, this needs to check Status and see if we are jumping
 	
-	if (g_playerBall.Status == JUMPING)
+	if (pBall->Status == JUMPING)
 	{
-		g_playerBall.Y += g_playerBall.YSpeed;
+		pBall->Y += pBall->YSpeed;
 		
-		g_playerBall.YSpeed += GRAVITY;
+		pBall->YSpeed += GRAVITY;
 		
-		if (g_playerBall.Y > 192-32)
+		if (pBall->Y > 192-32)
 		{
-			if (g_playerBall.YSpeed > 1.75)
+			if (pBall->YSpeed > 1.75)
 			{
-				if (g_playerBall.Y > 192-32)
+				if (pBall->Y > 192-32)
 				{
-					g_playerBall.Y = 192-32;
+					pBall->Y = 192-32;
 					int held = keysHeld();
 					if (held & KEY_A)
 					{
-						g_playerBall.Status = NORMAL;
+						pBall->Status = NORMAL;
 					}
 				}
 					
 			{
 			}
-				g_playerBall.YSpeed = -(g_playerBall.YSpeed/1.55);
-				g_playerBall.Y = 192-32;
+				pBall->YSpeed = -(pBall->YSpeed/1.55);
+				pBall->Y = 192-32;
 				
 			}
 			else
 			{
-				g_playerBall.Y = 192-32;
-				g_playerBall.Status = NORMAL;
+				pBall->Y = 192-32;
+				pBall->Status = NORMAL;
 			}
 		}
-		
-		
-		
-		
-		
-	
-	
 	}
-	
 };
 
 

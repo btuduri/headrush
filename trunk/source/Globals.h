@@ -11,6 +11,7 @@ struct Ball
 	float YSpeed;
 	float Angle;
 	int Status;
+	int Type;
 };
 
 	// Defines for the physic effects
@@ -25,6 +26,11 @@ struct Ball
 	
 #define		NORMAL				0
 #define		JUMPING				1
+
+	//	Defines for the balls type
+	
+#define		NORMAL				0
+#define		PLAYER				1
 
 #endif
 
