@@ -110,7 +110,6 @@ int main(void)
 		fixBoundary(&g_enemyBall);		// Fix boundary of enemy
 		
 		checkCollision(&g_playerBall, &g_enemyBall); // check collision between two balls
-		checkCollision(&g_playerBall, &g_enemyBall); // check collision between two balls
 		
 		fixBoundary(&g_playerBall);		// Fix boundary of player
 		fixBoundary(&g_enemyBall);		// Fix boundary of enemy
