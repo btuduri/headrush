@@ -4,3 +4,4 @@
 // This is the real definition
 
 Ball g_playerBall;
+Ball g_enemyBall;
