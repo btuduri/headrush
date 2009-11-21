@@ -15,66 +15,90 @@ void controlHead()					// *TO DO* make this work for all balls (even Normals)
 
 	if (held & KEY_L || held & KEY_LEFT) 
 	{
-		g_playerBall.XSpeed = g_playerBall.XSpeed - ACCEL;
-		if (g_playerBall.XSpeed < -MAXACCEL)
-		{
-			g_playerBall.XSpeed = -MAXACCEL;
-		}
-		
+		moveHead(&g_playerBall, ACTION_MOVELEFT);
 	}
 	else if (held & KEY_R || held & KEY_RIGHT)
 	{
-		g_playerBall.XSpeed = g_playerBall.XSpeed + ACCEL;
-		if (g_playerBall.XSpeed > MAXACCEL)
-		{
-			g_playerBall.XSpeed = MAXACCEL;
-		}	
+		moveHead(&g_playerBall, ACTION_MOVERIGHT);
 	}
 	else
 	{
-		if (g_playerBall.XSpeed < 0)
-		{
-			g_playerBall.XSpeed = g_playerBall.XSpeed + FRICTION;
-			if (g_playerBall.XSpeed > 0)
-			{
-				g_playerBall.XSpeed = 0;
-			}
-		}
-		else if (g_playerBall.XSpeed > 0)
-		{
-			g_playerBall.XSpeed = g_playerBall.XSpeed - FRICTION;
-			if (g_playerBall.XSpeed < 0)
-			{
-				g_playerBall.XSpeed = 0;
-			}
-		}
+		moveHead(&g_playerBall, ACTION_SLOW);
 	}
 	// now we need to check for a jump and init is possible
 	// check players status for the setting of jump, and if true, donot init untill false
 
-	if ((held & KEY_A) && (g_playerBall.Status != JUMPING && g_playerBall.Status != FALLING))
+	if (held & KEY_A)
 	{
-		g_playerBall.Status = JUMPING;
-		g_playerBall.YSpeed = -JUMPSPEED;
+		moveHead(&g_playerBall, ACTION_JUMP);
 	}
 };
 
+void moveHead(Ball *pBall, int action)
+{
+	switch(action)
+	{
+	case ACTION_MOVELEFT:
+		pBall->XSpeed = pBall->XSpeed - ACCEL;
+		
+		if (pBall->XSpeed < -MAXACCEL)
+		{
+			pBall->XSpeed = -MAXACCEL;
+		}
+		break;
+	case ACTION_MOVERIGHT:
+		pBall->XSpeed = pBall->XSpeed + ACCEL;
+		
+		if (pBall->XSpeed > MAXACCEL)
+		{
+			pBall->XSpeed = MAXACCEL;
+		}	
+		break;
+	case ACTION_SLOW:
+		if (pBall->XSpeed < 0)
+		{
+			pBall->XSpeed = g_playerBall.XSpeed + FRICTION;
+			
+			if (pBall->XSpeed > 0)
+			{
+				pBall->XSpeed = 0;
+			}
+		}
+		else if (pBall->XSpeed > 0)
+		{
+			pBall->XSpeed = pBall->XSpeed - FRICTION;
+			
+			if (pBall->XSpeed < 0)
+			{
+				pBall->XSpeed = 0;
+			}
+		}
+		break;
+	case ACTION_JUMP:
+		if (pBall->Status != BALLSTATUS_JUMPING && pBall->Status != BALLSTATUS_FALLING)
+		{
+			pBall->Status = BALLSTATUS_JUMPING;
+			pBall->YSpeed = -JUMPSPEED;
+		}
+		break;
+	}
+}
 
-// moveHead move the head! (simple!)
+// updateHead the head! (simple!)
 // perhaps?
 
-void moveHead(Ball* pBall)
+void updateHead(Ball* pBall)
 {
-float oldBallX = pBall->X;
+	float oldBallX = pBall->X;
 
-pBall->X = pBall->X + pBall->XSpeed;
+	pBall->X = pBall->X + pBall->XSpeed;
 
-if (pBall->X > 256-32 )
+	if (pBall->X > 256-BALLSIZE)
 	{
-		pBall->X = 256-32;
+		pBall->X = 256-BALLSIZE;
 		pBall->XSpeed = -abs(pBall->XSpeed / BOUNCE_X_DEADEN);
 	}
-else if (pBall->X < 0 )
+	else if (pBall->X < 0)
 	{
 		pBall->X = 0;
 		pBall->XSpeed = abs(pBall->XSpeed / BOUNCE_X_DEADEN);
@@ -85,7 +109,7 @@ else if (pBall->X < 0 )
 	// we should let detection handle falling, ie. if there is no floor, accelerate down until there is
 	//
 	
-	if ((pBall->Status == JUMPING || pBall->Status == GROUNDTOUCH) && (pBall->YSpeed < 0)) // WHY!! do i have to use double ==
+	if ((pBall->Status == BALLSTATUS_JUMPING || pBall->Status == BALLSTATUS_GROUNDTOUCH) && (pBall->YSpeed < 0)) // WHY!! do i have to use double ==
 	{
 		pBall->Y += pBall->YSpeed;
 		
@@ -93,11 +117,11 @@ else if (pBall->X < 0 )
 		
 		if ( pBall->YSpeed > 0)
 		{
-		pBall->Status = FALLING;
+			pBall->Status = BALLSTATUS_FALLING;
 		}
 		else
 		{
-		pBall->Status = JUMPING;
+			pBall->Status = BALLSTATUS_JUMPING;
 		}
 	}
 	// ok, now we need to check if there is ground below the ball (for now if Y<192-32)
@@ -106,23 +130,23 @@ else if (pBall->X < 0 )
 	else	// only need to worry about this if status is not JUMPING
 	
 	{
-		if (pBall->Y < 192-32)	// this would be replaced with a check for floor!
+		if (pBall->Y < 192-BALLSIZE)	// this would be replaced with a check for floor!
 		{
 			pBall->YSpeed += GRAVITY;
 			pBall->Y += pBall->YSpeed;
-			pBall->Status = FALLING;
+			pBall->Status = BALLSTATUS_FALLING;
 			
-			if ((pBall->Y > 192-32) && (pBall->YSpeed < BOUNCEFACTOR))
+			if ((pBall->Y > 192-BALLSIZE) && (pBall->YSpeed < BOUNCEFACTOR))
 			{
-				pBall->Y = 192-32;
+				pBall->Y = 192-BALLSIZE;
 				pBall->YSpeed = 0;
-				pBall->Status = NORMAL;
+				pBall->Status = BALLSTATUS_NORMAL;
 			}
-			else if ((pBall->Y > 192-32) && (pBall->YSpeed > BOUNCEFACTOR))
+			else if ((pBall->Y > 192-BALLSIZE) && (pBall->YSpeed > BOUNCEFACTOR))
 			{
-				pBall->Y = 192-32;
+				pBall->Y = 192-BALLSIZE;
 				pBall->YSpeed = -(pBall->YSpeed / BOUNCEFACTORAMOUNT);
-				pBall->Status = GROUNDTOUCH;
+				pBall->Status = BALLSTATUS_GROUNDTOUCH;
 			}		
 		}
 	}
@@ -149,5 +173,35 @@ float rotateHead(float originalX, float currentX)	// our rotation function
 	{
 		return -degreesToAngle((currentX - originalX) * 4);
 	}
+	
 	return 0;
+}
+
+// Calculate if there is a collision between two balls
+// Pass in via pointers so values can be changed
+void checkCollision(Ball* pBall1, Ball* pBall2)
+{
+	float xDist = pBall2->X - pBall1->X;
+	float yDist = pBall2->Y - pBall1->Y;
+	float dist = sqrt(xDist * xDist + yDist * yDist);
+	float angle = atan2(yDist, xDist);
+	 
+	if (dist < BALLSIZE)
+	{
+		pBall2->X = pBall1->X + (BALLSIZE * cos(angle));
+		pBall2->Y = pBall1->Y + (BALLSIZE * sin(angle));
+	}
+}
+
+// Fix the boundaries of a ball so it doesn't go off the screen
+void fixBoundary(Ball* pBall)
+{
+	if(pBall->X < 0)
+		pBall->X = 0;
+	if(pBall->Y < 0)
+		pBall->Y = 0;
+	if(pBall->X > 256 - BALLSIZE)
+		pBall->X = 256 - BALLSIZE;
+	if(pBall->Y > 192 - BALLSIZE)
+		pBall->Y = 192 - BALLSIZE;
 }
