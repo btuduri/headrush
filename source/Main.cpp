@@ -97,7 +97,7 @@ int main(void)
 		
 		if(rand() % 32 == 0) // Only move enemy occationally
 		{
-			// rand() % 5 returns a random value from 0 to 5
+			// rand() % 5 returns a random value from 0 to 4
 			randAction = rand() % 5;
 		}
 		
