@@ -75,17 +75,10 @@ int main(void)
 	g_playerBall.Type = BALLTYPE_PLAYER;
 	g_playerBall.YSpeed = 0;
 	
-	g_enemyBall.X = 0;
-	g_enemyBall.Y = 184-BALLSIZE;
-	g_enemyBall.Angle = 0;
-	g_enemyBall.Status = BALLSTATUS_NORMAL;
-	g_enemyBall.Type = BALLTYPE_NORMAL;
-	g_enemyBall.YSpeed = 0;
-	
 	int randAction = ACTION_NONE;
 	int randActionArray[BALLCOUNT];
 	
-	for(int i=0; i<BALLCOUNT; i++)
+	for(int i=1; i<BALLCOUNT; i++)
 	{
 		randActionArray[i] = ACTION_NONE;
 		
@@ -97,7 +90,14 @@ int main(void)
 		// Copy the ball tiles to each ball in the array
 		dmaCopy(sprite_ballTiles + 256, g_ballArray[i].Gfx, 32 * 32 * 2);	
 	}
-
+		// INIT PLAYER 
+		randActionArray[0] = ACTION_NONE;
+		g_ballArray[0].X = 112;
+		g_ballArray[0].Y = 184-BALLSIZE;
+		g_ballArray[0].Type = BALLTYPE_PLAYER;
+		g_ballArray[0].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball
+		// Copy the ball tiles to each ball in the array
+		dmaCopy(sprite_ballTiles, g_ballArray[0].Gfx, 32 * 32 * 2);	
 
 	while(1)
 	{
@@ -110,25 +110,14 @@ int main(void)
 			randAction = rand() % 5;
 		}
 		
-		moveHead(&g_enemyBall, randAction);
-		
 		updateHead(&g_playerBall);		// call updateHead with the address of the struct g_playerBall
-		updateHead(&g_enemyBall);		// call updateHead with the address of the struct g_enemyBall
 		
 		fixBoundary(&g_playerBall);		// Fix boundary of player
-		fixBoundary(&g_enemyBall);		// Fix boundary of enemy
-		
-		checkCollision(&g_playerBall, &g_enemyBall); // check collision between two balls
-		
-		fixBoundary(&g_playerBall);		// Fix boundary of player
-		fixBoundary(&g_enemyBall);		// Fix boundary of enemy
 		
 		// Draw sprites
 		oamRotateScale(&oamSub, 0, g_playerBall.Angle, intToFixed(1, 8), intToFixed(1, 8));	
-		oamRotateScale(&oamSub, 1, g_enemyBall.Angle, intToFixed(1, 8), intToFixed(1, 8));
 
 		oamSet(&oamSub, 0, g_playerBall.X - BALLOFFSET, g_playerBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxPlayerBallSub, 0, false, false, false, false, false);
-		oamSet(&oamSub, 1, g_enemyBall.X - BALLOFFSET, g_enemyBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxEnemyBallSub, 1, false, false, false, false, false);
 	
 		// draw loop
 		for(int i=0; i<BALLCOUNT; i++)
