@@ -5,3 +5,4 @@
 
 Ball g_playerBall;
 Ball g_enemyBall;
+Ball g_ballArray[];

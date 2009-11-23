@@ -11,6 +11,7 @@
 #include "sprite_ball.h"		// Include header file for sprites
 #include "font.h"
 #include "background01.h"
+#include "level01.h"
 #include "Globals.h"
 #include "Control.h"
 #include "Text.h"
@@ -43,31 +44,27 @@ int main(void)
 	dmaFillHalfWords(0, BG_MAP_RAM(BG1_MAP_BASE), 2048); 
 
 	// These routines allocates memory for the sprites tile data
-	u16* gfxPlayerBall = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_256Color);
 	u16* gfxPlayerBallSub = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
-	
-	u16* gfxEnemyBall = oamAllocateGfx(&oamMain, SpriteSize_32x32, SpriteColorFormat_256Color);
 	u16* gfxEnemyBallSub = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
 
 	// Basic dma tile and palette data
-	dmaCopy(sprite_ballTiles, gfxPlayerBall, 32 * 32 * 2);
 	dmaCopy(sprite_ballTiles, gfxPlayerBallSub, 32 * 32 * 2);
-	
-	dmaCopy(sprite_ballTiles + 256, gfxEnemyBall, 32 * 32 * 2);
 	dmaCopy(sprite_ballTiles + 256, gfxEnemyBallSub, 32 * 32 * 2);
 
-	dmaCopy(sprite_ballPal, SPRITE_PALETTE, 512);
+	for(int i=0; i<BALLCOUNT; i++)
+	g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+
 	dmaCopy(sprite_ballPal, SPRITE_PALETTE_SUB, 512);
 	
 	dmaCopy(fontTiles, BG_TILE_RAM(BG0_TILE_BASE), fontTilesLen);
 	dmaCopy(fontTiles, BG_TILE_RAM_SUB(BG0_TILE_BASE_SUB) , fontTilesLen);
 	
 	dmaCopy(background01Tiles, BG_TILE_RAM(BG1_TILE_BASE), background01TilesLen);
-	dmaCopy(background01Tiles, BG_TILE_RAM_SUB(BG1_TILE_BASE_SUB), background01TilesLen);
+	dmaCopy(level01Tiles, BG_TILE_RAM_SUB(BG1_TILE_BASE_SUB), level01TilesLen);
 	dmaCopy(background01Map, BG_MAP_RAM(BG1_MAP_BASE), background01MapLen);
-	dmaCopy(background01Map, BG_MAP_RAM_SUB(BG1_MAP_BASE_SUB), background01MapLen);
+	dmaCopy(level01Map, BG_MAP_RAM_SUB(BG1_MAP_BASE_SUB), level01MapLen);
 	dmaCopy(background01Pal, BG_PALETTE, background01PalLen);
-	dmaCopy(background01Pal, BG_PALETTE_SUB, background01PalLen);
+	dmaCopy(level01Pal, BG_PALETTE_SUB, level01PalLen);
 	
 	DrawString("HEADRUSH", 0, 0, true);
 
@@ -75,20 +72,33 @@ int main(void)
 	//Ball playerBall;
 	
 	g_playerBall.X = 112;
-	g_playerBall.Y = 192-BALLSIZE;
+	g_playerBall.Y = 184-BALLSIZE;
 	g_playerBall.Angle = 0;
 	g_playerBall.Status = BALLSTATUS_NORMAL;
 	g_playerBall.Type = BALLTYPE_PLAYER;
 	g_playerBall.YSpeed = 0;
 	
 	g_enemyBall.X = 0;
-	g_enemyBall.Y = 192-BALLSIZE;
+	g_enemyBall.Y = 184-BALLSIZE;
 	g_enemyBall.Angle = 0;
 	g_enemyBall.Status = BALLSTATUS_NORMAL;
 	g_enemyBall.Type = BALLTYPE_NORMAL;
 	g_enemyBall.YSpeed = 0;
 	
 	int randAction = ACTION_NONE;
+	
+	for(int i=0; i<BALLCOUNT; i++)
+		{
+		g_ballArray[i].X = rand() % (256-BALLSIZE);
+		g_ballArray[i].Y = 184-BALLSIZE;
+		g_ballArray[i].Type = BALLTYPE_NORMAL;
+	//	g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color		
+		
+		moveHead(&g_ballArray[i], randAction);
+		updateHead(&g_ballArray[i]);
+		
+		}
+
 
 	while(1)
 	{
@@ -118,14 +128,19 @@ int main(void)
 		oamRotateScale(&oamSub, 0, g_playerBall.Angle, intToFixed(1, 8), intToFixed(1, 8));	
 		oamRotateScale(&oamSub, 1, g_enemyBall.Angle, intToFixed(1, 8), intToFixed(1, 8));
 
-		oamSet(&oamSub, 0, g_playerBall.X - BALLOFFSET, g_playerBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxPlayerBall, 0, false, false, false, false, false);
-		oamSet(&oamSub, 1, g_enemyBall.X - BALLOFFSET, g_enemyBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxEnemyBall, 1, false, false, false, false, false);
+		oamSet(&oamSub, 0, g_playerBall.X - BALLOFFSET, g_playerBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxPlayerBallSub, 0, false, false, false, false, false);
+	//	oamSet(&oamSub, 1, g_enemyBall.X - BALLOFFSET, g_enemyBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxEnemyBall, 1, false, false, false, false, false);
+	
+		// draw loop
+		
+		for(int i=0; i<BALLCOUNT; i++)
+		oamSet(&oamSub, 0, g_ballArray[i].X - BALLOFFSET, g_ballArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, 0, false, false, false, false, false);
 	
 		// Wait for vblank
 		swiWaitForVBlank();
 		
 		// Update temp oam to real oam (must be done during a vblank so it's put here just under the vblank wait)
-		oamUpdate(&oamMain);
+	//	oamUpdate(&oamMain);
 		oamUpdate(&oamSub);
 	}
 

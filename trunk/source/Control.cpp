@@ -130,21 +130,21 @@ void updateHead(Ball* pBall)
 	else	// only need to worry about this if status is not JUMPING
 	
 	{
-		if (pBall->Y < 192-BALLSIZE)	// this would be replaced with a check for floor!
+		if (pBall->Y < 184-BALLSIZE)	// this would be replaced with a check for floor!
 		{
 			pBall->YSpeed += GRAVITY;
 			pBall->Y += pBall->YSpeed;
 			pBall->Status = BALLSTATUS_FALLING;
 			
-			if ((pBall->Y > 192-BALLSIZE) && (pBall->YSpeed < BOUNCEFACTOR))
+			if ((pBall->Y > 184-BALLSIZE) && (pBall->YSpeed < BOUNCEFACTOR))
 			{
-				pBall->Y = 192-BALLSIZE;
+				pBall->Y = 184-BALLSIZE;
 				pBall->YSpeed = 0;
 				pBall->Status = BALLSTATUS_NORMAL;
 			}
-			else if ((pBall->Y > 192-BALLSIZE) && (pBall->YSpeed > BOUNCEFACTOR))
+			else if ((pBall->Y > 184-BALLSIZE) && (pBall->YSpeed > BOUNCEFACTOR))
 			{
-				pBall->Y = 192-BALLSIZE;
+				pBall->Y = 184-BALLSIZE;
 				pBall->YSpeed = -(pBall->YSpeed / BOUNCEFACTORAMOUNT);
 				pBall->Status = BALLSTATUS_GROUNDTOUCH;
 			}		
@@ -206,6 +206,6 @@ void fixBoundary(Ball* pBall)
 		pBall->Y = 0;
 	if(pBall->X > 256 - BALLSIZE)
 		pBall->X = 256 - BALLSIZE;
-	if(pBall->Y > 192 - BALLSIZE)
-		pBall->Y = 192 - BALLSIZE;
+	if(pBall->Y > 184 - BALLSIZE)
+		pBall->Y = 184 - BALLSIZE;
 }
