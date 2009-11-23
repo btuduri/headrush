@@ -189,8 +189,8 @@ void checkCollision(Ball* pBall1, Ball* pBall2)
 	if (dist < BALLSIZE)
 	{
 		// Uncomment the following two lines so the balls repell each other instead of ball1 pushing ball2 away
-		//pBall1->X = pBall2->X - (BALLSIZE * cos(angle));
-		//pBall1->Y = pBall2->Y - (BALLSIZE * sin(angle));
+		pBall1->X = pBall2->X - (BALLSIZE * cos(angle));
+		pBall1->Y = pBall2->Y - (BALLSIZE * sin(angle));
 		
 		pBall2->X = pBall1->X + (BALLSIZE * cos(angle));
 		pBall2->Y = pBall1->Y + (BALLSIZE * sin(angle));

@@ -51,9 +51,6 @@ int main(void)
 	dmaCopy(sprite_ballTiles, gfxPlayerBallSub, 32 * 32 * 2);
 	dmaCopy(sprite_ballTiles + 256, gfxEnemyBallSub, 32 * 32 * 2);
 
-	for(int i=0; i<BALLCOUNT; i++)
-	g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
-
 	dmaCopy(sprite_ballPal, SPRITE_PALETTE_SUB, 512);
 	
 	dmaCopy(fontTiles, BG_TILE_RAM(BG0_TILE_BASE), fontTilesLen);
@@ -86,18 +83,20 @@ int main(void)
 	g_enemyBall.YSpeed = 0;
 	
 	int randAction = ACTION_NONE;
+	int randActionArray[BALLCOUNT];
 	
 	for(int i=0; i<BALLCOUNT; i++)
-		{
+	{
+		randActionArray[i] = ACTION_NONE;
+		
 		g_ballArray[i].X = rand() % (256-BALLSIZE);
 		g_ballArray[i].Y = 184-BALLSIZE;
 		g_ballArray[i].Type = BALLTYPE_NORMAL;
-	//	g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color		
+		g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball
 		
-		moveHead(&g_ballArray[i], randAction);
-		updateHead(&g_ballArray[i]);
-		
-		}
+		// Copy the ball tiles to each ball in the array
+		dmaCopy(sprite_ballTiles + 256, g_ballArray[i].Gfx, 32 * 32 * 2);	
+	}
 
 
 	while(1)
@@ -129,18 +128,43 @@ int main(void)
 		oamRotateScale(&oamSub, 1, g_enemyBall.Angle, intToFixed(1, 8), intToFixed(1, 8));
 
 		oamSet(&oamSub, 0, g_playerBall.X - BALLOFFSET, g_playerBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxPlayerBallSub, 0, false, false, false, false, false);
-	//	oamSet(&oamSub, 1, g_enemyBall.X - BALLOFFSET, g_enemyBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxEnemyBall, 1, false, false, false, false, false);
+		oamSet(&oamSub, 1, g_enemyBall.X - BALLOFFSET, g_enemyBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxEnemyBallSub, 1, false, false, false, false, false);
 	
 		// draw loop
-		
 		for(int i=0; i<BALLCOUNT; i++)
-		oamSet(&oamSub, 0, g_ballArray[i].X - BALLOFFSET, g_ballArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, 0, false, false, false, false, false);
+		{
+			if(rand() % 32 == 0) // Only move enemy occationally
+			{
+				// rand() % 5 returns a random value from 0 to 4
+				randActionArray[i] = rand() % 5;
+			}
+			
+			moveHead(&g_ballArray[i], randActionArray[i]);
+			
+			updateHead(&g_ballArray[i]);		// call updateHead with the address of the struct
+			
+			fixBoundary(&g_ballArray[i]);		// Fix boundary 
+			
+			// Note this only calculates between each ball in the array
+			for(int j=0; j<BALLCOUNT; j++)
+				checkCollision(&g_ballArray[i], &g_ballArray[j]); // check collision between all balls
+			
+			fixBoundary(&g_ballArray[i]);		// Fix boundary
+			
+			oamRotateScale(&oamSub, i + 2, g_ballArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));
+			
+			// The second parameter here is the oam id, so each sprite in the array needs to have it's own id
+			// The + 2 is jump over the player and enemy balls
+			// The 6th parameter from the end is the rotate/scale index. I think we have 32 of them so
+			// Again each ball gets it's own 
+			oamSet(&oamSub, i + 2, g_ballArray[i].X - BALLOFFSET, g_ballArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, i + 2, false, false, false, false, false);
+		}
 	
 		// Wait for vblank
 		swiWaitForVBlank();
 		
 		// Update temp oam to real oam (must be done during a vblank so it's put here just under the vblank wait)
-	//	oamUpdate(&oamMain);
+		// oamUpdate(&oamMain);
 		oamUpdate(&oamSub);
 	}
 
