@@ -79,5 +79,4 @@ struct Ball							// define the elements that construct our 'balls'
 // This means that g_playerBall; is defined externally (in Globals.cpp)
 
 extern Ball g_playerBall;
-extern Ball g_enemyBall;
 extern Ball g_ballArray[BALLCOUNT];
