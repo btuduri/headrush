@@ -1,3 +1,4 @@
+#include <nds.h>
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
@@ -5,6 +6,7 @@
 
 struct Ball							// define the elements that construct our 'balls'
 {
+	u16* Gfx;
 	float X;
 	float Y;
 	float XSpeed;
@@ -47,8 +49,11 @@ struct Ball							// define the elements that construct our 'balls'
 #define		GRAVITY				0.2				// force of gravity
 #define		BOUNCEFACTOR		1.75			// used to reverse a vertical drop for a bounce
 #define		BOUNCEFACTORAMOUNT	1.55			// the amount of bounce to allow on a vertical drop
+
+	// Defines for ball properties
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
+#define		BALLCOUNT			16				// Number of balls
 
 	// Defines for player (ball) status
 	
@@ -62,6 +67,7 @@ struct Ball							// define the elements that construct our 'balls'
 #define		BALLTYPE_NORMAL		0
 #define		BALLTYPE_PLAYER		1
 
+	// Defines for ball actions
 #define		ACTION_NONE			0
 #define		ACTION_MOVELEFT		1
 #define		ACTION_MOVERIGHT	2
@@ -74,3 +80,4 @@ struct Ball							// define the elements that construct our 'balls'
 
 extern Ball g_playerBall;
 extern Ball g_enemyBall;
+extern Ball g_ballArray[BALLCOUNT];
