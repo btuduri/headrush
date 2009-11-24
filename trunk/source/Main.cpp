@@ -65,34 +65,17 @@ int main(void)
 	
 	DrawString("HEADRUSH", 0, 0, true);
 
-	// This is defining playerBall again. So it's using this not the global one. So this will not work
-	//Ball playerBall;
-	
-	g_playerBall.X = 112;
-	g_playerBall.Y = 184-BALLSIZE;
-	g_playerBall.Angle = 0;
-	g_playerBall.Status = BALLSTATUS_NORMAL;
-	g_playerBall.Type = BALLTYPE_PLAYER;
-	g_playerBall.YSpeed = 0;
-	
-	//int randAction = ACTION_NONE;
-	int randActionArray[BALLCOUNT];
-	
 	for(int i=1; i<BALLCOUNT; i++)
 	{
-		randActionArray[i] = ACTION_NONE;
-		g_ballArray[i].Action = ACTION_NONE;
-		
+		g_ballArray[i].Action = ACTION_NONE;	
 		g_ballArray[i].X = rand() % (256-BALLSIZE);
 		g_ballArray[i].Y = 184-BALLSIZE;
 		g_ballArray[i].Type = BALLTYPE_NORMAL;
-		g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball
-		
+		g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
 		// Copy the ball tiles to each ball in the array
 		dmaCopy(sprite_ballTiles + 256, g_ballArray[i].Gfx, 32 * 32 * 2);	
 	}
 		// INIT PLAYER 
-		randActionArray[0] = ACTION_NONE;
 		g_ballArray[0].Action = ACTION_NONE;
 		g_ballArray[0].X = 112;
 		g_ballArray[0].Y = 184-BALLSIZE;
@@ -103,33 +86,13 @@ int main(void)
 
 	while(1)
 	{
-		// controlHead; You forgot the parenthesis here
-		controlHead();
-				
-		updateHead(&g_playerBall);		// call updateHead with the address of the struct g_playerBall
-		
-		fixBoundary(&g_playerBall);		// Fix boundary of player
-		
-		// Draw sprites
-		oamRotateScale(&oamSub, 0, g_playerBall.Angle, intToFixed(1, 8), intToFixed(1, 8));	
-
-		oamSet(&oamSub, 0, g_playerBall.X - BALLOFFSET, g_playerBall.Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, gfxPlayerBallSub, 0, false, false, false, false, false);
-	
 		// draw loop
 		for(int i=0; i<BALLCOUNT; i++)
 		{
-			if(rand() % 32 == 0) // Only move enemy occasionally
-			{
-				// rand() % 5 returns a random value from 0 to 4
-				randActionArray[i] = rand() % 5;
-			}
-			
-			moveHead(&g_ballArray[i], randActionArray[i]);
+			moveHead(&g_ballArray[i]);
 			
 			updateHead(&g_ballArray[i]);		// call updateHead with the address of the struct
-			
-			fixBoundary(&g_ballArray[i]);		// Fix boundary 
-			
+
 			// Note this only calculates between each ball in the array
 			for(int j=0; j<BALLCOUNT; j++)
 				checkCollision(&g_ballArray[i], &g_ballArray[j]); // check collision between all balls
