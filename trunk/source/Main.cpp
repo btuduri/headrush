@@ -43,7 +43,7 @@ int main(void)
 	dmaFillHalfWords(0, BG_MAP_RAM_SUB(BG1_MAP_BASE_SUB), 2048);
 	dmaFillHalfWords(0, BG_MAP_RAM(BG1_MAP_BASE), 2048); 
 
-	// These routines allocates memory for the sprites tile data
+	// These routines allocate memory for the sprites tile data
 	u16* gfxPlayerBallSub = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
 	u16* gfxEnemyBallSub = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
 
@@ -75,12 +75,13 @@ int main(void)
 	g_playerBall.Type = BALLTYPE_PLAYER;
 	g_playerBall.YSpeed = 0;
 	
-	int randAction = ACTION_NONE;
+	//int randAction = ACTION_NONE;
 	int randActionArray[BALLCOUNT];
 	
 	for(int i=1; i<BALLCOUNT; i++)
 	{
 		randActionArray[i] = ACTION_NONE;
+		g_ballArray[i].Action = ACTION_NONE;
 		
 		g_ballArray[i].X = rand() % (256-BALLSIZE);
 		g_ballArray[i].Y = 184-BALLSIZE;
@@ -92,6 +93,7 @@ int main(void)
 	}
 		// INIT PLAYER 
 		randActionArray[0] = ACTION_NONE;
+		g_ballArray[0].Action = ACTION_NONE;
 		g_ballArray[0].X = 112;
 		g_ballArray[0].Y = 184-BALLSIZE;
 		g_ballArray[0].Type = BALLTYPE_PLAYER;
@@ -103,13 +105,7 @@ int main(void)
 	{
 		// controlHead; You forgot the parenthesis here
 		controlHead();
-		
-		if(rand() % 32 == 0) // Only move enemy occationally
-		{
-			// rand() % 5 returns a random value from 0 to 4
-			randAction = rand() % 5;
-		}
-		
+				
 		updateHead(&g_playerBall);		// call updateHead with the address of the struct g_playerBall
 		
 		fixBoundary(&g_playerBall);		// Fix boundary of player
@@ -122,7 +118,7 @@ int main(void)
 		// draw loop
 		for(int i=0; i<BALLCOUNT; i++)
 		{
-			if(rand() % 32 == 0) // Only move enemy occationally
+			if(rand() % 32 == 0) // Only move enemy occasionally
 			{
 				// rand() % 5 returns a random value from 0 to 4
 				randActionArray[i] = rand() % 5;

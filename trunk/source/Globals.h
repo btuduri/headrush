@@ -11,9 +11,10 @@ struct Ball							// define the elements that construct our 'balls'
 	float Y;
 	float XSpeed;
 	float YSpeed;
-	float Angle;
+	int Angle;
 	int Status;
 	int Type;
+	int Action;
 };
 
 #define BG0_MAP_BASE				26
@@ -53,7 +54,7 @@ struct Ball							// define the elements that construct our 'balls'
 	// Defines for ball properties
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
-#define		BALLCOUNT			16				// Number of balls
+#define		BALLCOUNT			8				// Number of balls
 
 	// Defines for player (ball) status
 	
