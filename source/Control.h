@@ -1,5 +1,4 @@
-void controlHead();
-void moveHead(Ball *pBall, int action);
+void moveHead(Ball *pBall);
 void updateHead(Ball* pBall);
 float rotateHead(float fromX, float toX);
 void checkCollision(Ball* pBall1, Ball* pBall2);
