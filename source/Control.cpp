@@ -35,7 +35,16 @@ void controlHead()					// *TO DO* make this work for all balls (even Normals)
 };
 
 void moveHead(Ball *pBall, int action)
+
+// add control head to this first, only if type == player.
+// if type == normal (enemy) then check and set random movement
+// we do not need to pass action? Should we add action to the class?
+
+
 {
+	{
+	}
+
 	switch(action)
 	{
 	case ACTION_MOVELEFT:
@@ -124,7 +133,7 @@ void updateHead(Ball* pBall)
 			pBall->Status = BALLSTATUS_JUMPING;
 		}
 	}
-	// ok, now we need to check if there is ground below the ball (for now if Y<192-32)
+	// ok, now we need to check if there is ground below the ball (for now if Y<184-32)
 	// and if so, set status to falling and fall (he says with such confidence!!)
 	
 	else	// only need to worry about this if status is not JUMPING
