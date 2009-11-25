@@ -54,7 +54,7 @@ struct Ball							// define the elements that construct our 'balls'
 	// Defines for ball properties
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
-#define		BALLCOUNT			16				// Number of balls
+#define		BALLCOUNT			2				// Number of balls
 
 	// Defines for player (ball) status
 	

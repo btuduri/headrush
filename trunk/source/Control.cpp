@@ -39,7 +39,7 @@ void moveHead(Ball *pBall)
 		if (held & KEY_A)
 		{
 		//	pBall->Action = ACTION_JUMP;
-			if (pBall->Status != BALLSTATUS_JUMPING && pBall->Status != BALLSTATUS_FALLING)
+			if ((pBall->Status != BALLSTATUS_JUMPING) && (pBall->Status != BALLSTATUS_FALLING))
 			{
 				pBall->Status = BALLSTATUS_JUMPING;
 				pBall->YSpeed = -JUMPSPEED;
@@ -152,23 +152,27 @@ void updateHead(Ball* pBall)
 	
 	{
 		if (pBall->Y < 184-BALLSIZE)	// this would be replaced with a check for floor!
-		{
+		{	// We are falling (ie. not on the floor)
 			pBall->YSpeed += GRAVITY;
 			pBall->Y += pBall->YSpeed;
 			pBall->Status = BALLSTATUS_FALLING;
 			
 			if ((pBall->Y > 184-BALLSIZE) && (pBall->YSpeed < BOUNCEFACTOR))
-			{
+			{	// We have hit the floor and need to stop bouncing
 				pBall->Y = 184-BALLSIZE;
 				pBall->YSpeed = 0;
 				pBall->Status = BALLSTATUS_NORMAL;
 			}
 			else if ((pBall->Y > 184-BALLSIZE) && (pBall->YSpeed > BOUNCEFACTOR))
-			{
+			{	// We have hit the floor and still have some bounce in us
 				pBall->Y = 184-BALLSIZE;
 				pBall->YSpeed = -(pBall->YSpeed / BOUNCEFACTORAMOUNT);
 				pBall->Status = BALLSTATUS_GROUNDTOUCH;
 			}		
+		}
+		else	// we are on the floor
+		{
+			pBall->Status = BALLSTATUS_NORMAL;
 		}
 	}
 	
