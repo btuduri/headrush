@@ -63,7 +63,7 @@ int main(void)
 	dmaCopy(background01Pal, BG_PALETTE, background01PalLen);
 	dmaCopy(level01Pal, BG_PALETTE_SUB, level01PalLen);
 	
-	DrawString("HEADRUSH", 0, 0, true);
+	DrawString("HEADRUSH, whatever next?", 0, 0, false);
 
 	for(int i=1; i<BALLCOUNT; i++)
 	{
@@ -94,8 +94,8 @@ int main(void)
 			updateHead(&g_ballArray[i]);		// call updateHead with the address of the struct
 
 			// Note this only calculates between each ball in the array
-			for(int j=0; j<BALLCOUNT; j++)
-				checkCollision(&g_ballArray[i], &g_ballArray[j]); // check collision between all balls
+		//	for(int j=0; j<BALLCOUNT; j++)
+		//		checkCollision(&g_ballArray[i], &g_ballArray[j]); // check collision between all balls
 			
 			fixBoundary(&g_ballArray[i]);		// Fix boundary
 			

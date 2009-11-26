@@ -4,3 +4,4 @@
 // This is the real definition
 
 Ball g_ballArray[];
+int g_reJump = 0;

@@ -6,6 +6,7 @@
 
 #include "Globals.h"
 #include "Control.h"
+#include "Detect.h"
 
 void moveHead(Ball *pBall)
 
@@ -36,13 +37,14 @@ void moveHead(Ball *pBall)
 		}
 		// now we need to check for a jump and init is possible
 		// check players status for the setting of jump, and if true, donot init untill false
-		if (held & KEY_A)
+		if (held & KEY_A) // || (g_reJump == 1))
 		{
 		//	pBall->Action = ACTION_JUMP;
 			if ((pBall->Status != BALLSTATUS_JUMPING) && (pBall->Status != BALLSTATUS_FALLING))
 			{
 				pBall->Status = BALLSTATUS_JUMPING;
 				pBall->YSpeed = -JUMPSPEED;
+				g_reJump = 0;
 
 			}
 		}
@@ -53,13 +55,10 @@ void moveHead(Ball *pBall)
 		{
 			// rand() % 5 returns a random value from 0 to 4
 			pBall->Action = rand() % 5;
-			if (pBall->Action == ACTION_JUMP)
+			if ((pBall->Action == ACTION_JUMP) && (pBall->Status != BALLSTATUS_JUMPING && pBall->Status != BALLSTATUS_FALLING))
 			{
-				if (pBall->Status != BALLSTATUS_JUMPING && pBall->Status != BALLSTATUS_FALLING)
-				{
-					pBall->Status = BALLSTATUS_JUMPING;
-					pBall->YSpeed = -JUMPSPEED;
-				}		
+				pBall->Status = BALLSTATUS_JUMPING;
+				pBall->YSpeed = -JUMPSPEED;		
 			}
 		}
 	}
@@ -69,18 +68,18 @@ void moveHead(Ball *pBall)
 	switch(pBall->Action)
 	{
 	case ACTION_MOVELEFT:
-		pBall->XSpeed = pBall->XSpeed - ACCEL;
-		if (pBall->XSpeed < -MAXACCEL)
-		{
-			pBall->XSpeed = -MAXACCEL;
-		}
+		if ((pBall->Status == BALLSTATUS_NORMAL) && (pBall->XSpeed > 0))		// if we are on the ground
+			pBall->XSpeed = pBall->XSpeed - (ACCEL * 2);						// allow a quicker turn
+		else
+			pBall->XSpeed = pBall->XSpeed - ACCEL;
+		if (pBall->XSpeed < -MAXACCEL) pBall->XSpeed = -MAXACCEL;
 		break;
 	case ACTION_MOVERIGHT:
-		pBall->XSpeed = pBall->XSpeed + ACCEL;
-		if (pBall->XSpeed > MAXACCEL)
-		{
-			pBall->XSpeed = MAXACCEL;
-		}	
+		if ((pBall->Status == BALLSTATUS_NORMAL) && (pBall->XSpeed < 0))
+			pBall->XSpeed = pBall->XSpeed + (ACCEL * 2);
+		else
+			pBall->XSpeed = pBall->XSpeed + ACCEL;
+		if (pBall->XSpeed > MAXACCEL) pBall->XSpeed = MAXACCEL;
 		break;
 	case ACTION_SLOW:
 		if (pBall->XSpeed < 0)
@@ -99,7 +98,6 @@ void moveHead(Ball *pBall)
 				pBall->XSpeed = 0;
 			}
 		}
-
 		break;
 	}
 }
@@ -125,55 +123,58 @@ void updateHead(Ball* pBall)
 		pBall->XSpeed = abs(pBall->XSpeed / BOUNCE_X_DEADEN);
 	}
 	
-	// ok, now account for the jump, this needs to check Status and see if we are jumping
-	// but... It only really needs to work with upward movement!
-	// we should let detection handle falling, ie. if there is no floor, accelerate down until there is
-	//
+// ok, now account for the jump, this needs to check Status and see if we are jumping (or bouncing)
+// but... It only really needs to work with upward movement!
 	
-	if ((pBall->Status == BALLSTATUS_JUMPING || pBall->Status == BALLSTATUS_GROUNDTOUCH) && (pBall->YSpeed < 0)) // WHY!! do i have to use double ==
+	if ((pBall->Status == BALLSTATUS_JUMPING || pBall->Status == BALLSTATUS_GROUNDTOUCH) && pBall->YSpeed < 0)
 	{
-		pBall->Y += pBall->YSpeed;
+		// jumping up!
+		pBall->Y += pBall->YSpeed;	// y speed will be negative
 		
-		pBall->YSpeed += GRAVITY;
+		pBall->YSpeed += GRAVITY;	// check if Y speed is now possitive
 		
-		if ( pBall->YSpeed > 0)
-		{
+		if ( pBall->YSpeed >= 0)
+		{	// Y speed is +
 			pBall->Status = BALLSTATUS_FALLING;
 		}
 		else
-		{
+		{	// Y speed is -
 			pBall->Status = BALLSTATUS_JUMPING;
 		}
 	}
-	// ok, now we need to check if there is ground below the ball (for now if Y<184-32)
-	// and if so, set status to falling and fall (he says with such confidence!!)
+
+// ok, now we need to check if there is ground below the ball
+// use 'feetCentre' to check the centre of a ball, the value is returned!
 	
-	else	// only need to worry about this if status is not JUMPING
-	
+	else	// we already know that we are not jumping!
 	{
-		if (pBall->Y < 184-BALLSIZE)	// this would be replaced with a check for floor!
+		if (feetCentre(pBall->X, pBall->Y) == 0)			// not on the floor
 		{	// We are falling (ie. not on the floor)
-			pBall->YSpeed += GRAVITY;
+			if (pBall->YSpeed < MAXYSPEED)
+				pBall->YSpeed += GRAVITY;
+	
 			pBall->Y += pBall->YSpeed;
 			pBall->Status = BALLSTATUS_FALLING;
 			
-			if ((pBall->Y > 184-BALLSIZE) && (pBall->YSpeed < BOUNCEFACTOR))
-			{	// We have hit the floor and need to stop bouncing
-				pBall->Y = 184-BALLSIZE;
+			if ((feetCentre(pBall->X, pBall->Y) != 0) && (pBall->YSpeed < BOUNCEFACTOR))
+			{	// We have hit the floor and need to stop bouncing.
 				pBall->YSpeed = 0;
 				pBall->Status = BALLSTATUS_NORMAL;
-			}
-			else if ((pBall->Y > 184-BALLSIZE) && (pBall->YSpeed > BOUNCEFACTOR))
+			}			
+			else if ((feetCentre(pBall->X, pBall->Y) != 0) && (pBall->YSpeed > BOUNCEFACTOR))
 			{	// We have hit the floor and still have some bounce in us
-				pBall->Y = 184-BALLSIZE;
 				pBall->YSpeed = -(pBall->YSpeed / BOUNCEFACTORAMOUNT);
 				pBall->Status = BALLSTATUS_GROUNDTOUCH;
 			}		
 		}
-		else	// we are on the floor
+		else												// we are on the floor
 		{
+			g_reJump = 0;
+			pBall->Y = (int(pBall->Y / 8) *8);
 			pBall->Status = BALLSTATUS_NORMAL;
 		}
+		if (keysHeld() & KEY_A)
+			g_reJump = 1;
 	}
 	
 	// Now we need to rotate the head, based on our movement!
@@ -189,7 +190,6 @@ void updateHead(Ball* pBall)
 //
 float rotateHead(float originalX, float currentX)	// our rotation function
 {
-
 	if (currentX < originalX)
 	{
 		return degreesToAngle((originalX - currentX) * 4);
@@ -197,8 +197,7 @@ float rotateHead(float originalX, float currentX)	// our rotation function
 	else if (originalX < currentX)
 	{
 		return -degreesToAngle((currentX - originalX) * 4);
-	}
-	
+	}	
 	return 0;
 }
 
@@ -235,8 +234,8 @@ void fixBoundary(Ball* pBall)
 		pBall->X = 0;
 	if(pBall->Y < 0)
 		pBall->Y = 0;
-	if(pBall->X > 256 - BALLSIZE)
-		pBall->X = 256 - BALLSIZE;
-	if(pBall->Y > 184 - BALLSIZE)
-		pBall->Y = 184 - BALLSIZE;
+	if(pBall->X > SCREEN_WIDTH - BALLSIZE)
+		pBall->X = SCREEN_WIDTH - BALLSIZE;
+	if(pBall->Y > SCREEN_HEIGHT - BALLSIZE)
+		pBall->Y = SCREEN_HEIGHT - BALLSIZE;
 }

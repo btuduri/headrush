@@ -1,2 +1,2 @@
-extern int bLevelStore[];
-extern char const bLevelData[]
+extern char bLevelStore[];
+extern char const bLevelData[];

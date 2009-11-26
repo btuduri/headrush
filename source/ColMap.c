@@ -1,4 +1,4 @@
-int bLevelStore[768];
+char bLevelStore[768];
 
 char const bLevelData[768 * 1] =
 { 

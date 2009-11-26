@@ -40,21 +40,25 @@ struct Ball							// define the elements that construct our 'balls'
 
 #define BG3_TILE_BASE				0
 #define BG3_TILE_BASE_SUB			0
+
+#define SCREEN_WIDTH				256
+#define SCREEN_HEIGHT				192
 	
 	// Defines for the physic effects
-#define 	ACCEL				0.050			// Horizontal acceleration on forced movement
-#define 	FRICTION			0.045			// Speed of slowdown when no force applied
+#define 	ACCEL				0.050			// Horizontal acceleration on forced movement		( *1.5 when turning)
+#define 	FRICTION			0.035			// Speed of slowdown when no force applied
 #define		MAXACCEL			5				// Maximum horizontal speed
-#define		BOUNCE_X_DEADEN		1.0125			// how much to deaden a horzontal bounce
-#define		JUMPSPEED			5				// initial speed of a jump (negetive)
-#define		GRAVITY				0.2				// force of gravity
-#define		BOUNCEFACTOR		1.75			// used to reverse a vertical drop for a bounce
-#define		BOUNCEFACTORAMOUNT	1.55			// the amount of bounce to allow on a vertical drop
+#define		BOUNCE_X_DEADEN		1.015			// how much to deaden a horzontal bounce
+#define		JUMPSPEED			5				// initial speed of a jump (negetive)				( > higher jump)
+#define		GRAVITY				0.265			// force of gravity									(affects jump and bounce)
+#define		BOUNCEFACTOR		1.25			// used to reverse a vertical drop for a bounce		( < for more bounces)
+#define		BOUNCEFACTORAMOUNT	1.55			// the amount of bounce to allow on a vertical drop	( > for smaller bounce)
+#define		MAXYSPEED			6				// maximum speed you can drop
 
 	// Defines for ball properties
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
-#define		BALLCOUNT			2				// Number of balls
+#define		BALLCOUNT			16				// Number of balls
 
 	// Defines for player (ball) status
 	
@@ -80,3 +84,4 @@ struct Ball							// define the elements that construct our 'balls'
 // This means that g_playerBall; is defined externally (in Globals.cpp)
 
 extern Ball g_ballArray[BALLCOUNT];
+extern int g_reJump;
