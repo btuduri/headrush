@@ -12,9 +12,11 @@
 #include "font.h"
 #include "background01.h"
 #include "level01.h"
+#include "level02.h"
 #include "Globals.h"
 #include "Control.h"
 #include "Text.h"
+#include "DrawMap.h"
 
 int main(void)
 {
@@ -25,13 +27,13 @@ int main(void)
 	
 	bgInit(0, BgType_Text4bpp, BgSize_T_256x256, BG0_MAP_BASE, BG0_TILE_BASE);
 	bgInit(1, BgType_Text8bpp, BgSize_T_256x256, BG1_MAP_BASE, BG1_TILE_BASE);
-	bgInit(2, BgType_Text8bpp, BgSize_T_256x256, BG2_MAP_BASE, BG2_TILE_BASE);
-	bgInit(3, BgType_Text8bpp, BgSize_T_256x256, BG3_MAP_BASE, BG3_TILE_BASE);
+//	bgInit(2, BgType_Text8bpp, BgSize_T_256x256, BG2_MAP_BASE, BG2_TILE_BASE);
+//	bgInit(3, BgType_Text8bpp, BgSize_T_256x256, BG3_MAP_BASE, BG3_TILE_BASE);
 	
 	bgInitSub(0, BgType_Text4bpp, BgSize_T_256x256, BG0_MAP_BASE_SUB, BG0_TILE_BASE_SUB);
-	bgInitSub(1, BgType_Text8bpp, BgSize_T_256x256, BG1_MAP_BASE_SUB, BG1_TILE_BASE_SUB);
-	bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, BG2_MAP_BASE_SUB, BG2_TILE_BASE_SUB);
-	bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, BG3_MAP_BASE_SUB, BG3_TILE_BASE_SUB);
+	int playBG = bgInitSub(1, BgType_Text8bpp, BgSize_T_512x512, BG1_MAP_BASE_SUB, BG1_TILE_BASE_SUB);
+//	bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, BG2_MAP_BASE_SUB, BG2_TILE_BASE_SUB);
+//	bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, BG3_MAP_BASE_SUB, BG3_TILE_BASE_SUB);
 
 	oamInit(&oamMain, SpriteMapping_1D_32, false);	// This just sets up an area in RAM for storing temporary OAM data
 	oamInit(&oamSub, SpriteMapping_1D_32, false);
@@ -40,7 +42,7 @@ int main(void)
 	dmaFillHalfWords(0, BG_PALETTE, 512);
 	dmaFillHalfWords(0, BG_MAP_RAM_SUB(BG0_MAP_BASE_SUB), 2048);
 	dmaFillHalfWords(0, BG_MAP_RAM(BG0_MAP_BASE), 2048);
-	dmaFillHalfWords(0, BG_MAP_RAM_SUB(BG1_MAP_BASE_SUB), 2048);
+	dmaFillHalfWords(0, BG_MAP_RAM_SUB(BG1_MAP_BASE_SUB), 4096);
 	dmaFillHalfWords(0, BG_MAP_RAM(BG1_MAP_BASE), 2048); 
 
 	// These routines allocate memory for the sprites tile data
@@ -57,13 +59,16 @@ int main(void)
 	dmaCopy(fontTiles, BG_TILE_RAM_SUB(BG0_TILE_BASE_SUB) , fontTilesLen);
 	
 	dmaCopy(background01Tiles, BG_TILE_RAM(BG1_TILE_BASE), background01TilesLen);
-	dmaCopy(level01Tiles, BG_TILE_RAM_SUB(BG1_TILE_BASE_SUB), level01TilesLen);
 	dmaCopy(background01Map, BG_MAP_RAM(BG1_MAP_BASE), background01MapLen);
-	dmaCopy(level01Map, BG_MAP_RAM_SUB(BG1_MAP_BASE_SUB), level01MapLen);
 	dmaCopy(background01Pal, BG_PALETTE, background01PalLen);
-	dmaCopy(level01Pal, BG_PALETTE_SUB, level01PalLen);
+	
+	dmaCopy(level02Tiles, bgGetGfxPtr(playBG), level02TilesLen);
+	dmaCopy(level02Map, bgGetMapPtr(playBG), level02MapLen);
+	dmaCopy(level02Pal, BG_PALETTE_SUB, level02PalLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
+	
+	int horiz = 8;
 
 	for(int i=1; i<BALLCOUNT; i++)
 	{
@@ -86,6 +91,9 @@ int main(void)
 
 	while(1)
 	{
+	
+		drawMap(g_ballArray[0].X,g_ballArray[0].Y);
+	
 		// draw loop
 		for(int i=0; i<BALLCOUNT; i++)
 		{
