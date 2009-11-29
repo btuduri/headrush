@@ -33,13 +33,13 @@ struct Ball							// define the elements that construct our 'balls'
 #define BG0_TILE_BASE_SUB			7
 
 #define BG1_TILE_BASE				5
-#define BG1_TILE_BASE_SUB			5
+#define BG1_TILE_BASE_SUB			0
 
 #define BG2_TILE_BASE				3
 #define BG2_TILE_BASE_SUB			3
 
 #define BG3_TILE_BASE				0
-#define BG3_TILE_BASE_SUB			0
+#define BG3_TILE_BASE_SUB			2
 
 #define SCREEN_WIDTH				256
 #define SCREEN_HEIGHT				192
