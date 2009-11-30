@@ -5,8 +5,10 @@
 #include <unistd.h>
 
 #include "DrawMap.h"
+#include "Globals.h"
 
-void drawMap(int XCoord,int YCoord)
+
+void drawMap()
 {
 
 // the idea of this piece of code 'will' be that you pass the X,Y coord of player (0-511) and the scroll possition will be updated to match
@@ -17,8 +19,10 @@ void drawMap(int XCoord,int YCoord)
 // also, scrolling messes up the idea of multiple players on screen (or does it?)
 
 
-	REG_BG1HOFS_SUB = XCoord;
+	REG_BG1HOFS_SUB = (int)g_levelX;
 	
-	REG_BG1VOFS_SUB = YCoord;
-
+	REG_BG1VOFS_SUB = (int)g_levelY;
+	
+//	g_levelX = XCoord;
+//	g_levelY = 320;
 }

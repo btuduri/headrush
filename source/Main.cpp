@@ -67,14 +67,12 @@ int main(void)
 	dmaCopy(level02Pal, BG_PALETTE_SUB, level02PalLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
-	
-	int horiz = 8;
 
 	for(int i=1; i<BALLCOUNT; i++)
 	{
 		g_ballArray[i].Action = ACTION_NONE;	
-		g_ballArray[i].X = rand() % (256-BALLSIZE);
-		g_ballArray[i].Y = 184-BALLSIZE;
+		g_ballArray[i].X = rand() % (LEVEL_WIDTH-BALLSIZE);
+		g_ballArray[i].Y = rand() % (LEVEL_HEIGHT-BALLSIZE);
 		g_ballArray[i].Type = BALLTYPE_NORMAL;
 		g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
 		// Copy the ball tiles to each ball in the array
@@ -89,13 +87,16 @@ int main(void)
 		// Copy the ball tiles to each ball in the array
 		dmaCopy(sprite_ballTiles, g_ballArray[0].Gfx, 32 * 32 * 2);	
 
+	g_levelX = 0;
+	g_levelY = 512-192;
+
 	while(1)
 	{
 	
-		drawMap(g_ballArray[0].X,g_ballArray[0].Y);
+		drawMap();
 	
 		// draw loop
-		for(int i=0; i<BALLCOUNT; i++)
+		for(register int i=0; i<BALLCOUNT; i++)
 		{
 			moveHead(&g_ballArray[i]);
 			
@@ -109,12 +110,18 @@ int main(void)
 			
 			oamRotateScale(&oamSub, i + 2, g_ballArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));
 			
+			int x = g_ballArray[i].X - g_levelX;
+			int y = g_ballArray[i].Y - g_levelY;
+			
 			// The second parameter here is the oam id, so each sprite in the array needs to have it's own id
 			// The + 2 is jump over the player and enemy balls
 			// The 6th parameter from the end is the rotate/scale index. I think we have 32 of them so
 			// Again each ball gets it's own 
-			oamSet(&oamSub, i + 2, g_ballArray[i].X - BALLOFFSET, g_ballArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, i + 2, false, false, false, false, false);
-		}
+			if ((x > -(BALLSIZE + BALLOFFSET) && x < (SCREEN_WIDTH + BALLOFFSET)) && (y > -(BALLSIZE + BALLOFFSET) && y < (SCREEN_HEIGHT + BALLOFFSET)) && (g_ballArray[i].Type == BALLTYPE_NORMAL))
+				oamSet(&oamSub, i + 2, x - BALLOFFSET, y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, i + 2, false, false, false, false, false);
+			else if (g_ballArray[i].Type == BALLTYPE_PLAYER)
+				oamSet(&oamSub, i + 2, g_ballArray[i].X - BALLOFFSET, g_ballArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, i + 2, false, false, false, false, false);
+	}
 	
 		// Wait for vblank
 		swiWaitForVBlank();
