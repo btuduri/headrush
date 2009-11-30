@@ -21,7 +21,12 @@
 #-------------------------------------------------------
 # Map layout for regular backgrounds. 16-bit entries, but a flat map (i.e., not broken down into screenblocks). 
 #-------------------------------------------------------
--mLf
+#-mLf
+
+#-------------------------------------------------------
+# Map layout for regular backgrounds. 16-bit entries, broken down into screenblocks. 
+#-------------------------------------------------------
+-mLs
 
 #-------------------------------------------------------
 # transparent color is magenta
