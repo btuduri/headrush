@@ -43,6 +43,9 @@ struct Ball							// define the elements that construct our 'balls'
 
 #define SCREEN_WIDTH				256
 #define SCREEN_HEIGHT				192
+
+#define LEVEL_WIDTH					512
+#define LEVEL_HEIGHT				512
 	
 	// Defines for the physic effects
 #define 	ACCEL				0.050			// Horizontal acceleration on forced movement		( *1.5 when turning)
@@ -56,6 +59,7 @@ struct Ball							// define the elements that construct our 'balls'
 #define		MAXYSPEED			6				// maximum speed you can drop
 
 	// Defines for ball properties
+#define		BALLSCROLL			64				// closeness to sides to enable scrolling
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
 #define		BALLCOUNT			16				// Number of balls
@@ -85,3 +89,5 @@ struct Ball							// define the elements that construct our 'balls'
 
 extern Ball g_ballArray[BALLCOUNT];
 extern int g_reJump;
+extern float g_levelX;
+extern float g_levelY;

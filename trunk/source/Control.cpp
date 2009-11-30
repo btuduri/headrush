@@ -45,7 +45,6 @@ void moveHead(Ball *pBall)
 				pBall->Status = BALLSTATUS_JUMPING;
 				pBall->YSpeed = -JUMPSPEED;
 				g_reJump = 0;
-
 			}
 		}
 	}
@@ -109,17 +108,19 @@ void moveHead(Ball *pBall)
 void updateHead(Ball* pBall)
 {
 	float oldBallX = pBall->X;
-
+	float oldBallY = pBall->Y;
+	float oldLevelX = g_levelX;
+	
 	pBall->X = pBall->X + pBall->XSpeed;
 
-	if (pBall->X > 256-BALLSIZE)
+	if (pBall->X + scrollCheckX(pBall->Type) > LEVEL_WIDTH-BALLSIZE)
 	{
-		pBall->X = 256-BALLSIZE;
+		pBall->X = oldBallX;
 		pBall->XSpeed = -abs(pBall->XSpeed / BOUNCE_X_DEADEN);
 	}
-	else if (pBall->X < 0)
+	else if (pBall->X + scrollCheckX(pBall->Type) < 0)
 	{
-		pBall->X = 0;
+	//	pBall->X = g_levelX;
 		pBall->XSpeed = abs(pBall->XSpeed / BOUNCE_X_DEADEN);
 	}
 	
@@ -148,7 +149,7 @@ void updateHead(Ball* pBall)
 	
 	else	// we already know that we are not jumping!
 	{
-		if (feetCentre(pBall->X, pBall->Y) == 0)			// not on the floor
+		if (feetCentre(pBall->X, pBall->Y, pBall->Type) == 0)			// not on the floor
 		{	// We are falling (ie. not on the floor)
 			if (pBall->YSpeed < MAXYSPEED)
 				pBall->YSpeed += GRAVITY;
@@ -156,12 +157,12 @@ void updateHead(Ball* pBall)
 			pBall->Y += pBall->YSpeed;
 			pBall->Status = BALLSTATUS_FALLING;
 			
-			if ((feetCentre(pBall->X, pBall->Y) != 0) && (pBall->YSpeed < BOUNCEFACTOR))
+			if ((feetCentre(pBall->X, pBall->Y, pBall->Type) != 0) && (pBall->YSpeed < BOUNCEFACTOR))
 			{	// We have hit the floor and need to stop bouncing.
 				pBall->YSpeed = 0;
 				pBall->Status = BALLSTATUS_NORMAL;
 			}			
-			else if ((feetCentre(pBall->X, pBall->Y) != 0) && (pBall->YSpeed > BOUNCEFACTOR))
+			else if ((feetCentre(pBall->X, pBall->Y, pBall->Type) != 0) && (pBall->YSpeed > BOUNCEFACTOR))
 			{	// We have hit the floor and still have some bounce in us
 				pBall->YSpeed = -(pBall->YSpeed / BOUNCEFACTORAMOUNT);
 				pBall->Status = BALLSTATUS_GROUNDTOUCH;
@@ -170,72 +171,136 @@ void updateHead(Ball* pBall)
 		else												// we are on the floor
 		{
 			g_reJump = 0;
-			pBall->Y = (int(pBall->Y / 8) *8);
+			pBall->Y = int(pBall->Y + ((scrollCheckY(pBall->Type) & 7) / 8) *8);
 			pBall->Status = BALLSTATUS_NORMAL;
 		}
-		if (keysHeld() & KEY_A)
-			g_reJump = 1;
+	}
+	//
+	// ok, we need to scroll the screen if this is a player ball! (ulp)
+	//
+	if (pBall->Type == BALLTYPE_PLAYER)
+	{
+		if (pBall->X + BALLSIZE > SCREEN_WIDTH - BALLSCROLL)
+		{
+			if (g_levelX < LEVEL_WIDTH - SCREEN_WIDTH)
+			{
+			g_levelX = g_levelX + (pBall->X - oldBallX);
+			pBall->X = oldBallX;
+			}
+			else
+			{
+			g_levelX = LEVEL_WIDTH - SCREEN_WIDTH;
+			}
+		}
+		else if (pBall->X < BALLSCROLL)
+		{
+			if (g_levelX > 0)
+			{
+			g_levelX = g_levelX - (oldBallX - pBall->X);
+			pBall->X = oldBallX;
+			}
+			else
+			{
+			g_levelX = 0;
+			if (pBall->X < 0) pBall->X = 0;
+			}
+		}		
+		if (pBall->Y + BALLSIZE > SCREEN_HEIGHT - BALLSCROLL)
+		{
+			if (g_levelY < LEVEL_HEIGHT - SCREEN_HEIGHT)
+			{
+			g_levelY = g_levelY + (pBall->Y - oldBallY);
+			pBall->Y = oldBallY;
+			}
+			else
+			{
+			g_levelY = LEVEL_HEIGHT - SCREEN_HEIGHT;
+			}
+		}
+		else if (pBall->Y < BALLSCROLL)
+		{
+			if (g_levelY > 0)
+			{
+			g_levelY = g_levelY - (oldBallY - pBall->Y);
+			pBall->Y = oldBallY;
+			}
+			else
+			{
+			g_levelY = 0;
+			}
+		}		
+	
 	}
 	
 	// Now we need to rotate the head, based on our movement!
 	// using rotateHead to pass, initialX, and currentX to return the angle!
 	// wow!! It worked!
 	
-	pBall->Angle += rotateHead(oldBallX, pBall->X);
+	// how can I get it to rotate when pushing the map?
+	
+	pBall->Angle += rotateHead(oldBallX, pBall->X, pBall->Type, oldLevelX);
 	
 };
 
 //
 // Calculate rotation based on horizontal movement
 //
-float rotateHead(float originalX, float currentX)	// our rotation function
+float rotateHead(float originalX, float currentX, int type, float oldX)	// our rotation function
 {
-	if (currentX < originalX)
+	if (type == BALLTYPE_NORMAL)
 	{
-		return degreesToAngle((originalX - currentX) * 4);
+		if (currentX < originalX)
+		{
+			return degreesToAngle((originalX - currentX) * 4);
+		}
+		else if (originalX < currentX)
+		{
+			return -degreesToAngle((currentX - originalX) * 4);
+		}	
+		return 0;
 	}
-	else if (originalX < currentX)
+	else if (type == BALLTYPE_PLAYER)
 	{
-		return -degreesToAngle((currentX - originalX) * 4);
-	}	
+		if (oldX == g_levelX)
+		{
+			if (currentX < originalX)
+			{
+				return degreesToAngle((originalX - currentX) * 4);
+			}
+			else if (originalX < currentX)
+			{
+				return -degreesToAngle((currentX - originalX) * 4);
+			}	
+			return 0;	
+		}
+		else
+		{
+			if (g_levelX < oldX)
+			{
+				return degreesToAngle((oldX - g_levelX) * 4);
+			}
+			else if (oldX < g_levelX)
+			{
+				return -degreesToAngle((g_levelX - oldX) * 4);
+			}	
+			return 0;	
+		}
+	}
 	return 0;
 }
 
-// Calculate if there is a collision between two balls
-// Pass in via pointers so values can be changed
 
-// WHY does it make MEGA jumps???
-void checkCollision(Ball* pBall1, Ball* pBall2)
+
+//
+//	Return the value of the scroll possition if this is a playerball
+//
+int scrollCheckX(int type)
 {
-//	if (((pBall1->X >= pBall2->X) && (pBall1->X <= pBall2->X+BALLSIZE)) && ((pBall1->Y >= pBall2->Y) && (pBall1->Y <= pBall2->Y+BALLSIZE)))
-	{
-		int xDist = pBall2->X - pBall1->X;
-		int yDist = pBall2->Y - pBall1->Y;
-		int dist = sqrt(xDist * xDist + yDist * yDist);
-		float angle = atan2(yDist, xDist);
-	 
-		if (dist < BALLSIZE)
-		{
-			// Uncomment the following two lines so the balls repell each other instead of ball1 pushing ball2 away
-			pBall1->X = pBall2->X - (BALLSIZE * cos(angle));
-			pBall1->Y = pBall2->Y - (BALLSIZE * sin(angle));
-		
-			pBall2->X = pBall1->X + (BALLSIZE * cos(angle));
-			pBall2->Y = pBall1->Y + (BALLSIZE * sin(angle));
-
-		}
-	}
+	if (type == BALLTYPE_PLAYER) return g_levelX;
+	else return 0;
 }
-
-// Fix the boundaries of a ball so it doesn't go off the screen
-void fixBoundary(Ball* pBall)
+int scrollCheckY(int type)
 {
-	if(pBall->X < 0)
-		pBall->X = 0;
-	if(pBall->Y < 0)
-		pBall->Y = 0;
-	if(pBall->X > SCREEN_WIDTH - BALLSIZE)
-		pBall->X = SCREEN_WIDTH - BALLSIZE;
-	if(pBall->Y > SCREEN_HEIGHT - BALLSIZE)
-		pBall->Y = SCREEN_HEIGHT - BALLSIZE;
+	if (type == BALLTYPE_PLAYER) return g_levelY;
+	else return 0;
 }
