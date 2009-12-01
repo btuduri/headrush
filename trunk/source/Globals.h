@@ -50,13 +50,13 @@ struct Ball							// define the elements that construct our 'balls'
 	// Defines for the physic effects
 #define 	ACCEL				0.050			// Horizontal acceleration on forced movement		( *1.5 when turning)
 #define 	FRICTION			0.035			// Speed of slowdown when no force applied
-#define		MAXACCEL			5				// Maximum horizontal speed
+#define		MAXACCEL			4.5				// Maximum horizontal speed
 #define		BOUNCE_X_DEADEN		1.015			// how much to deaden a horzontal bounce
 #define		JUMPSPEED			5				// initial speed of a jump (negetive)				( > higher jump)
 #define		GRAVITY				0.265			// force of gravity									(affects jump and bounce)
 #define		BOUNCEFACTOR		1.25			// used to reverse a vertical drop for a bounce		( < for more bounces)
 #define		BOUNCEFACTORAMOUNT	1.55			// the amount of bounce to allow on a vertical drop	( > for smaller bounce)
-#define		MAXYSPEED			6				// maximum speed you can drop
+#define		MAXYSPEED			5				// maximum speed you can drop
 
 	// Defines for ball properties
 #define		BALLSCROLL			64				// closeness to sides to enable scrolling

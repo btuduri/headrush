@@ -15,6 +15,8 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 {
 	int x = 0;
 	int y = 0;
+	int ySettle = 0;
+	
 	if (Type == BALLTYPE_NORMAL)
 	{
 		x = (int)Xcoord + 12;
@@ -24,9 +26,11 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	{
 		x = (int)Xcoord + (int)g_levelX + 12;
 		y = (int)Ycoord + (int)g_levelY + 24;
+		ySettle = (int)g_levelY;
 	}
 
-	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
+//	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
+	if ( ((int)Ycoord + ySettle & 7) <= MAXYSPEED )
 	{
 	return bLevelData[((y/8)*64) + (x/8)];
 	}
