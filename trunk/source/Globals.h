@@ -104,6 +104,8 @@ struct Sprite							// define the elements that construct our 'balls'
 // This means that g_playerBall; is defined externally (in Globals.cpp)
 
 extern Sprite g_spriteArray[BALLCOUNT];
-extern int g_reJump;
 extern float g_levelX;
 extern float g_levelY;
+
+extern bool g_jumpTrap;
+extern bool g_reJump;
