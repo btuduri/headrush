@@ -171,14 +171,14 @@ void updateSprite(Sprite* pSprite)
 			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) != 0)
 			{
 			//	pSprite->Action = ACTION_MOVERIGHT;
-				if (pSprite->XSpeed < 1 && pSprite->XSpeed > 0)
-					pSprite->XSpeed = pSprite->XSpeed +.15;
+				if (pSprite->XSpeed < ROLLSPEEDLIMIT && pSprite->XSpeed > 0)
+					pSprite->XSpeed = pSprite->XSpeed + ROLLSPEED;
 			}
 			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) != 0)
 			{
 			//	pSprite->Action = ACTION_MOVELEFT;
-				if (pSprite->XSpeed > -1 && pSprite->XSpeed < 0)
-					pSprite->XSpeed = pSprite->XSpeed -.15;
+				if (pSprite->XSpeed > -ROLLSPEEDLIMIT && pSprite->XSpeed < 0)
+					pSprite->XSpeed = pSprite->XSpeed - ROLLSPEED;
 			}
 		}
 		else												// we are on the floor
