@@ -23,6 +23,8 @@ void moveSprite(Sprite *pSprite)
 		scanKeys();						// Read button data
 		int held = keysHeld();			// Used to calculate if a button is down
 		
+		// checks for left and right movement		(Use L/R and LEFT/RIGHT)
+		
 		if (held & KEY_L || held & KEY_LEFT)
 		{
 			pSprite->Action = ACTION_MOVELEFT;
@@ -35,17 +37,28 @@ void moveSprite(Sprite *pSprite)
 		{
 		pSprite->Action = ACTION_SLOW;
 		}
-		// now we need to check for a jump and init is possible
-		// check players status for the setting of jump, and if true, donot init untill false
-		if (held & KEY_A) // || (g_reJump == 1))
+		
+		// check for jump.								(USE A)
+		
+		// check players status for the setting of jump, and if true, do not init until false
+		// if jump is held, do not allow another jump!
+		if ((held & KEY_A) || (g_reJump == TRUE))
 		{
-		//	pSprite->Action = ACTION_JUMP;
-			if ((pSprite->Status != BALLSTATUS_JUMPING) && (pSprite->Status != BALLSTATUS_FALLING))
+			if (g_jumpTrap == 0 || g_reJump == TRUE)
 			{
-				pSprite->Status = BALLSTATUS_JUMPING;
-				pSprite->YSpeed = -JUMPSPEED;
-				g_reJump = 0;
+				//	pSprite->Action = ACTION_JUMP;
+				if ((pSprite->Status != BALLSTATUS_JUMPING) && (pSprite->Status != BALLSTATUS_FALLING))
+				{
+					pSprite->Status = BALLSTATUS_JUMPING;
+					pSprite->YSpeed = -JUMPSPEED;
+					g_reJump = FALSE;
+					g_jumpTrap = TRUE;
+				}
 			}
+		}
+		else
+		{
+			g_jumpTrap = FALSE;
 		}
 	}
 	else if (pSprite->Type == BALLTYPE_EVILBALL)							// = Random control
@@ -170,20 +183,18 @@ void updateSprite(Sprite* pSprite)
 			}
 			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-			//	pSprite->Action = ACTION_MOVERIGHT;
 				if (pSprite->XSpeed < ROLLSPEEDLIMIT && pSprite->XSpeed > 0)
 					pSprite->XSpeed = pSprite->XSpeed + ROLLSPEED;
 			}
 			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-			//	pSprite->Action = ACTION_MOVELEFT;
 				if (pSprite->XSpeed > -ROLLSPEEDLIMIT && pSprite->XSpeed < 0)
 					pSprite->XSpeed = pSprite->XSpeed - ROLLSPEED;
 			}
 		}
 		else												// we are on the floor
 		{
-			g_reJump = 0;
+			// g_reJump = 0;
 			// This will settle the ball to a platform, taking into count the Y level position if 
 			// the ball is the player.
 			int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
