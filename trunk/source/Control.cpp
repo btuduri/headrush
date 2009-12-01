@@ -152,11 +152,12 @@ void updateSprite(Sprite* pSprite)
 		if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == 0)			// not on the floor
 		{	// We are falling (ie. not on the floor)
 			if (pSprite->YSpeed < MAXYSPEED)
+			{
 				pSprite->YSpeed += GRAVITY;
-	
+			};
 			pSprite->Y += pSprite->YSpeed;
 			pSprite->Status = BALLSTATUS_FALLING;
-			
+	
 			if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) != 0) && (pSprite->YSpeed < BOUNCEFACTOR))
 			{	// We have hit the floor and need to stop bouncing.
 				pSprite->YSpeed = 0;
@@ -166,7 +167,19 @@ void updateSprite(Sprite* pSprite)
 			{	// We have hit the floor and still have some bounce in us
 				pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
 				pSprite->Status = BALLSTATUS_GROUNDTOUCH;
-			}		
+			}
+			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) != 0)
+			{
+				pSprite->Action = ACTION_MOVERIGHT;
+				if (pSprite->XSpeed < 1)
+					pSprite->XSpeed = 1;
+			}
+			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) != 0)
+			{
+				pSprite->Action = ACTION_MOVELEFT;
+				if (pSprite->XSpeed > -1)
+					pSprite->XSpeed = -1;
+			}
 		}
 		else												// we are on the floor
 		{
