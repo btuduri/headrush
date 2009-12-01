@@ -66,32 +66,32 @@ void moveHead(Ball *pBall)
 	
 	switch(pBall->Action)
 	{
-	case ACTION_MOVELEFT:
-		if ((pBall->Status == BALLSTATUS_NORMAL) && (pBall->XSpeed > 0))		// if we are on the ground
-			pBall->XSpeed = pBall->XSpeed - (ACCEL * 2);						// allow a quicker turn
+	case ACTION_MOVELEFT:													// LEFT
+		if ((pBall->Status == BALLSTATUS_NORMAL) && (pBall->XSpeed > 0))		// if we are on the ground,
+			pBall->XSpeed = pBall->XSpeed - (ACCEL * 3);						// then allow a quicker turn
 		else
-			pBall->XSpeed = pBall->XSpeed - ACCEL;
-		if (pBall->XSpeed < -MAXACCEL) pBall->XSpeed = -MAXACCEL;
+			pBall->XSpeed = pBall->XSpeed - ACCEL;								// else, normal turn
+		if (pBall->XSpeed < -MAXACCEL) pBall->XSpeed = -MAXACCEL;				// stop the speed from going past maximum
 		break;
-	case ACTION_MOVERIGHT:
-		if ((pBall->Status == BALLSTATUS_NORMAL) && (pBall->XSpeed < 0))
-			pBall->XSpeed = pBall->XSpeed + (ACCEL * 2);
+	case ACTION_MOVERIGHT:													// RIGHT
+		if ((pBall->Status == BALLSTATUS_NORMAL) && (pBall->XSpeed < 0))		// if we are on the ground,
+			pBall->XSpeed = pBall->XSpeed + (ACCEL * 3);						// then allow a quicker turn
 		else
-			pBall->XSpeed = pBall->XSpeed + ACCEL;
-		if (pBall->XSpeed > MAXACCEL) pBall->XSpeed = MAXACCEL;
+			pBall->XSpeed = pBall->XSpeed + ACCEL;								// else, normal turn
+		if (pBall->XSpeed > MAXACCEL) pBall->XSpeed = MAXACCEL;				// stop the speed from going past maximum
 		break;
-	case ACTION_SLOW:
-		if (pBall->XSpeed < 0)
+	case ACTION_SLOW:														// SLOW DOWN
+		if (pBall->XSpeed < 0)													// if speed if negative	
 		{
-			pBall->XSpeed = pBall->XSpeed + FRICTION;
-			if (pBall->XSpeed > 0)
+			pBall->XSpeed = pBall->XSpeed + FRICTION;							// add friction to the movement
+			if (pBall->XSpeed > 0)												// if speed becomes a positive
 			{
-				pBall->XSpeed = 0;
+				pBall->XSpeed = 0;												// time to stop
 			}
 		}
-		else if (pBall->XSpeed > 0)
+		else if (pBall->XSpeed > 0)												// if speed is positive
 		{
-			pBall->XSpeed = pBall->XSpeed - FRICTION;
+			pBall->XSpeed = pBall->XSpeed - FRICTION;							// do the reverse af above!
 			if (pBall->XSpeed < 0)
 			{
 				pBall->XSpeed = 0;
@@ -171,7 +171,11 @@ void updateHead(Ball* pBall)
 		else												// we are on the floor
 		{
 			g_reJump = 0;
-			pBall->Y = int(pBall->Y + ((scrollCheckY(pBall->Type) & 7) / 8) *8);
+			// This will settle the ball to a platform, taking into count the Y level position if 
+			// the ball is the player.
+			int ySettle = ((int)pBall->Y + (int)scrollCheckY(pBall->Type)) >> 3;
+			pBall->Y = (ySettle << 3) - (int)scrollCheckY(pBall->Type);
+			// we are settled, so the ball can return to normal play
 			pBall->Status = BALLSTATUS_NORMAL;
 		}
 	}
@@ -180,32 +184,32 @@ void updateHead(Ball* pBall)
 	//
 	if (pBall->Type == BALLTYPE_PLAYER)
 	{
-		if (pBall->X + BALLSIZE > SCREEN_WIDTH - BALLSCROLL)
+		if (pBall->X + BALLSIZE > SCREEN_WIDTH - BALLSCROLL) 	// have we moved (right) into an area that means scroll
 		{
-			if (g_levelX < LEVEL_WIDTH - SCREEN_WIDTH)
+			if (g_levelX < LEVEL_WIDTH - SCREEN_WIDTH)			// if the level X scroll is < the edge,
 			{
-			g_levelX = g_levelX + (pBall->X - oldBallX);
-			pBall->X = oldBallX;
+			g_levelX = g_levelX + (pBall->X - oldBallX);		// scroll level
+			pBall->X = oldBallX;								// and keep player stationary
 			}
-			else
+			else												// if not,
 			{
-			g_levelX = LEVEL_WIDTH - SCREEN_WIDTH;
+			g_levelX = LEVEL_WIDTH - SCREEN_WIDTH;				// let player move and keep scroll stationary
 			}
 		}
-		else if (pBall->X < BALLSCROLL)
+		else if (pBall->X < BALLSCROLL)							// have we moved (left) into an area that means scroll				
 		{
-			if (g_levelX > 0)
-			{
-			g_levelX = g_levelX - (oldBallX - pBall->X);
-			pBall->X = oldBallX;
+			if (g_levelX > 0)									// are we able to scroll?
+			{			
+			g_levelX = g_levelX - (oldBallX - pBall->X);		// if so, scroll map and
+			pBall->X = oldBallX;								// keep player stationary.
 			}
-			else
+			else												// otherwise,
 			{
-			g_levelX = 0;
-			if (pBall->X < 0) pBall->X = 0;
+			g_levelX = 0;										// keep level stationary
+			if (pBall->X < 0) pBall->X = 0;					// and allow player to move if possible
 			}
 		}		
-		if (pBall->Y + BALLSIZE > SCREEN_HEIGHT - BALLSCROLL)
+		if (pBall->Y + BALLSIZE > SCREEN_HEIGHT - BALLSCROLL)	// these work the same for Y as they did for X
 		{
 			if (g_levelY < LEVEL_HEIGHT - SCREEN_HEIGHT)
 			{
@@ -236,16 +240,16 @@ void updateHead(Ball* pBall)
 	// using rotateHead to pass, initialX, and currentX to return the angle!
 	// wow!! It worked!
 	
-	// how can I get it to rotate when pushing the map?
+	// call rotateSprite to rotate the ball based on area moved horizontally
 	
-	pBall->Angle += rotateHead(oldBallX, pBall->X, pBall->Type, oldLevelX);
+	pBall->Angle += rotateSprite(oldBallX, pBall->X, pBall->Type, oldLevelX);
 	
 };
 
 //
 // Calculate rotation based on horizontal movement
 //
-float rotateHead(float originalX, float currentX, int type, float oldX)	// our rotation function
+float rotateSprite(float originalX, float currentX, int type, float oldX)	// our rotation function
 {
 	if (type == BALLTYPE_NORMAL)
 	{
