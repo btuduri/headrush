@@ -52,7 +52,7 @@ struct Sprite							// define the elements that construct our 'balls'
 #define 	FRICTION			0.035			// Speed of slowdown when no force applied
 #define		MAXACCEL			4.5				// Maximum horizontal speed
 #define		BOUNCE_X_DEADEN		1.015			// how much to deaden a horzontal bounce
-#define		JUMPSPEED			3.95			// initial speed of a jump (negetive)				( > higher jump)
+#define		JUMPSPEED			4.1				// initial speed of a jump (negetive)				( > higher jump)
 #define		GRAVITY				0.195			// force of gravity									(affects jump and bounce)
 #define		BOUNCEFACTOR		1.25			// used to reverse a vertical drop for a bounce		( < for more bounces)
 #define		BOUNCEFACTORAMOUNT	1.55			// the amount of bounce to allow on a vertical drop	( > for smaller bounce)

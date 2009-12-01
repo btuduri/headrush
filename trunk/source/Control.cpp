@@ -68,14 +68,14 @@ void moveSprite(Sprite *pSprite)
 	{
 	case ACTION_MOVELEFT:													// LEFT
 		if ((pSprite->Status == BALLSTATUS_NORMAL) && (pSprite->XSpeed > 0))		// if we are on the ground,
-			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 3);						// then allow a quicker turn
+			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 5);						// then allow a quicker turn
 		else
 			pSprite->XSpeed = pSprite->XSpeed - ACCEL;								// else, normal turn
 		if (pSprite->XSpeed < -MAXACCEL) pSprite->XSpeed = -MAXACCEL;				// stop the speed from going past maximum
 		break;
 	case ACTION_MOVERIGHT:													// RIGHT
 		if ((pSprite->Status == BALLSTATUS_NORMAL) && (pSprite->XSpeed < 0))		// if we are on the ground,
-			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 3);						// then allow a quicker turn
+			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 5);						// then allow a quicker turn
 		else
 			pSprite->XSpeed = pSprite->XSpeed + ACCEL;								// else, normal turn
 		if (pSprite->XSpeed > MAXACCEL) pSprite->XSpeed = MAXACCEL;				// stop the speed from going past maximum
