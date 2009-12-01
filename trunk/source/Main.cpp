@@ -74,22 +74,22 @@ int main(void)
 
 	for(int i=1; i<BALLCOUNT; i++)
 	{
-		g_ballArray[i].Action = ACTION_NONE;	
-		g_ballArray[i].X = rand() % (LEVEL_WIDTH-BALLSIZE);
-		g_ballArray[i].Y = rand() % (LEVEL_HEIGHT-BALLSIZE);
-		g_ballArray[i].Type = BALLTYPE_NORMAL;
-		g_ballArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
+		g_spriteArray[i].Action = ACTION_NONE;	
+		g_spriteArray[i].X = (rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE;
+		g_spriteArray[i].Y = (rand() % (LEVEL_HEIGHT-(BALLSIZE * 2))) + BALLSIZE;
+		g_spriteArray[i].Type = BALLTYPE_EVILBALL;
+		g_spriteArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
 		// Copy the ball tiles to each ball in the array
-		dmaCopy(sprite_ballTiles + 256, g_ballArray[i].Gfx, 32 * 32 * 2);	
+		dmaCopy(sprite_ballTiles + 256, g_spriteArray[i].Gfx, 32 * 32 * 2);	
 	}
 		// INIT PLAYER 
-		g_ballArray[0].Action = ACTION_NONE;
-		g_ballArray[0].X = 112;
-		g_ballArray[0].Y = 184-BALLSIZE;
-		g_ballArray[0].Type = BALLTYPE_PLAYER;
-		g_ballArray[0].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball
+		g_spriteArray[0].Action = ACTION_NONE;
+		g_spriteArray[0].X = 112;							// Will need to work out a way to centre the scroll
+		g_spriteArray[0].Y = 184-BALLSIZE;				// based on the players initial x/y coord
+		g_spriteArray[0].Type = BALLTYPE_PLAYER;
+		g_spriteArray[0].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball
 		// Copy the ball tiles to each ball in the array
-		dmaCopy(sprite_ballTiles, g_ballArray[0].Gfx, 32 * 32 * 2);	
+		dmaCopy(sprite_ballTiles, g_spriteArray[0].Gfx, 32 * 32 * 2);	
 
 	g_levelX = 0;
 	g_levelY = 512-192;
@@ -102,29 +102,31 @@ int main(void)
 		// draw loop
 		for(register int i=0; i<BALLCOUNT; i++)
 		{
-			moveSprite(&g_ballArray[i]);		// move all active sprites
+			moveSprite(&g_spriteArray[i]);		// move all active sprites
 			
-			updateSprite(&g_ballArray[i]);		// call updateSprite with the address of the struct
+			updateSprite(&g_spriteArray[i]);		// call updateSprite with the address of the struct
 
 			// Note this only calculates between each ball in the array
 		//	for(int j=0; j<BALLCOUNT; j++)
-		//		checkCollision(&g_ballArray[i], &g_ballArray[j]); // check collision between all balls
+		//		checkCollision(&g_spriteArray[i], &g_spriteArray[j]); // check collision between all balls
 			
-			fixBoundary(&g_ballArray[i]);		// Fix boundary
+			fixBoundary(&g_spriteArray[i]);		// Fix boundary
 			
-			oamRotateScale(&oamSub, i + 2, g_ballArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));
-			
-			int x = g_ballArray[i].X - g_levelX;
-			int y = g_ballArray[i].Y - g_levelY;
+			oamRotateScale(&oamSub, i + 2, g_spriteArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
+		
+			// set a local x/y so we know if we can display the current sprite
+	
+			int x = g_spriteArray[i].X - g_levelX;
+			int y = g_spriteArray[i].Y - g_levelY;
 			
 			// The second parameter here is the oam id, so each sprite in the array needs to have it's own id
 			// The + 2 is jump over the player and enemy balls
 			// The 6th parameter from the end is the rotate/scale index. I think we have 32 of them so
 			// Again each ball gets it's own 
-			if ((x > -(BALLSIZE + BALLOFFSET) && x < (SCREEN_WIDTH + BALLOFFSET)) && (y > -(BALLSIZE + BALLOFFSET) && y < (SCREEN_HEIGHT + BALLOFFSET)) && (g_ballArray[i].Type == BALLTYPE_NORMAL))
-				oamSet(&oamSub, i + 2, x - BALLOFFSET, y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, i + 2, false, false, false, false, false);
-			else if (g_ballArray[i].Type == BALLTYPE_PLAYER)
-				oamSet(&oamSub, i + 2, g_ballArray[i].X - BALLOFFSET, g_ballArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_ballArray[i].Gfx, i + 2, false, false, false, false, false);
+			if ((x > -(BALLSIZE + BALLOFFSET) && x < (SCREEN_WIDTH + BALLOFFSET)) && (y > -(BALLSIZE + BALLOFFSET) && y < (SCREEN_HEIGHT + BALLOFFSET)) && (g_spriteArray[i].Type == BALLTYPE_EVILBALL))
+				oamSet(&oamSub, i + 2, x - BALLOFFSET, y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
+			else if (g_spriteArray[i].Type == BALLTYPE_PLAYER)
+				oamSet(&oamSub, i + 2, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 	}
 	
 		// Wait for vblank

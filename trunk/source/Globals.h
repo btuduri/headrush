@@ -4,7 +4,7 @@
 
 // Having this struct inside here means it won't make a copy each time you #include it
 
-struct Ball							// define the elements that construct our 'balls'
+struct Sprite							// define the elements that construct our 'balls'
 {
 	u16* Gfx;
 	float X;
@@ -63,7 +63,7 @@ struct Ball							// define the elements that construct our 'balls'
 #define		BALLSCROLLY			64				// closeness to top/bot to enable scrolling
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
-#define		BALLCOUNT			16				// Number of balls
+#define		BALLCOUNT			24				// Number of balls
 
 	// Defines for player (ball) status
 	
@@ -74,8 +74,9 @@ struct Ball							// define the elements that construct our 'balls'
 
 	//	Defines for the balls type
 	
-#define		BALLTYPE_NORMAL		0
+#define		BALLTYPE_NULL		0
 #define		BALLTYPE_PLAYER		1
+#define		BALLTYPE_EVILBALL	2
 
 	// Defines for ball actions
 #define		ACTION_NONE			0
@@ -88,7 +89,7 @@ struct Ball							// define the elements that construct our 'balls'
 
 // This means that g_playerBall; is defined externally (in Globals.cpp)
 
-extern Ball g_ballArray[BALLCOUNT];
+extern Sprite g_spriteArray[BALLCOUNT];
 extern int g_reJump;
 extern float g_levelX;
 extern float g_levelY;
