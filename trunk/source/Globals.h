@@ -20,11 +20,11 @@ struct Ball							// define the elements that construct our 'balls'
 #define BG0_MAP_BASE				26
 #define BG0_MAP_BASE_SUB			26
 
-#define BG1_MAP_BASE				27
-#define BG1_MAP_BASE_SUB			27
+#define BG1_MAP_BASE				31
+#define BG1_MAP_BASE_SUB			20
 
 #define BG2_MAP_BASE				28
-#define BG2_MAP_BASE_SUB			28
+#define BG2_MAP_BASE_SUB			24
 
 #define BG3_MAP_BASE				30
 #define BG3_MAP_BASE_SUB			30
@@ -36,7 +36,7 @@ struct Ball							// define the elements that construct our 'balls'
 #define BG1_TILE_BASE_SUB			0
 
 #define BG2_TILE_BASE				3
-#define BG2_TILE_BASE_SUB			3
+#define BG2_TILE_BASE_SUB			4
 
 #define BG3_TILE_BASE				0
 #define BG3_TILE_BASE_SUB			2
@@ -59,7 +59,8 @@ struct Ball							// define the elements that construct our 'balls'
 #define		MAXYSPEED			5				// maximum speed you can drop
 
 	// Defines for ball properties
-#define		BALLSCROLL			64				// closeness to sides to enable scrolling
+#define		BALLSCROLLX			64				// closeness to sides to enable scrolling
+#define		BALLSCROLLY			64				// closeness to top/bot to enable scrolling
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
 #define		BALLCOUNT			16				// Number of balls

@@ -30,7 +30,7 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	}
 
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
-	if ( ((int)Ycoord + ySettle & 7) <= MAXYSPEED )
+	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
 	{
 	return bLevelData[((y/8)*64) + (x/8)];
 	}
