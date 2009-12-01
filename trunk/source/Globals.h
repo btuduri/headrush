@@ -87,6 +87,18 @@ struct Sprite							// define the elements that construct our 'balls'
 #define		ACTION_SLOW			3
 #define		ACTION_JUMP			4
 
+	// Collision data (these are the decypted values from colmaps)
+	
+#define		PLATFORM			2				// the highest value of a decryted colmap platform
+
+#define		BLANK				0
+#define		SOLID				1
+#define		JUMPTHROUGH			2
+#define		CRUMBLER			3
+#define		FALLER				4
+
+#define		DEADLY				64
+
 #endif
 
 // This means that g_playerBall; is defined externally (in Globals.cpp)
