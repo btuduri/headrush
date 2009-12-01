@@ -17,7 +17,7 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	int y = 0;
 	int ySettle = 0;
 	
-	if (Type == BALLTYPE_NORMAL)
+	if (Type == BALLTYPE_EVILBALL)
 	{
 		x = (int)Xcoord + 12;
 		y = (int)Ycoord + 24;
@@ -37,42 +37,93 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	else return 0;
 
 }
+int feetLeft(float Xcoord,float Ycoord, int Type)
+{
+	int x = 0;
+	int y = 0;
+	int ySettle = 0;
+	
+	if (Type == BALLTYPE_EVILBALL)
+	{
+		x = (int)Xcoord + 4;
+		y = (int)Ycoord + 24;
+	}
+	else if (Type == BALLTYPE_PLAYER)
+	{
+		x = (int)Xcoord + (int)g_levelX + 4;
+		y = (int)Ycoord + (int)g_levelY + 24;
+		ySettle = (int)g_levelY;
+	}
 
+//	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
+	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
+	{
+	return bLevelData[((y/8)*64) + (x/8)];
+	}
+	else return 0;
+
+}
+int feetRight(float Xcoord,float Ycoord, int Type)
+{
+	int x = 0;
+	int y = 0;
+	int ySettle = 0;
+	
+	if (Type == BALLTYPE_EVILBALL)
+	{
+		x = (int)Xcoord + 16;
+		y = (int)Ycoord + 24;
+	}
+	else if (Type == BALLTYPE_PLAYER)
+	{
+		x = (int)Xcoord + (int)g_levelX + 16;
+		y = (int)Ycoord + (int)g_levelY + 24;
+		ySettle = (int)g_levelY;
+	}
+
+//	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
+	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
+	{
+	return bLevelData[((y/8)*64) + (x/8)];
+	}
+	else return 0;
+
+}
 // Calculate if there is a collision between two balls
 // Pass in via pointers so values can be changed
 
 // WHY does it make MEGA jumps???
-void checkCollision(Ball* pBall1, Ball* pBall2)
+/*void checkCollision(Ball* pSprite1, Ball* pSprite2)
 {
-//	if (((pBall1->X >= pBall2->X) && (pBall1->X <= pBall2->X+BALLSIZE)) && ((pBall1->Y >= pBall2->Y) && (pBall1->Y <= pBall2->Y+BALLSIZE)))
+//	if (((pSprite1->X >= pSprite2->X) && (pSprite1->X <= pSprite2->X+BALLSIZE)) && ((pSprite1->Y >= pSprite2->Y) && (pSprite1->Y <= pSprite2->Y+BALLSIZE)))
 	{
-		int xDist = pBall2->X - pBall1->X;
-		int yDist = pBall2->Y - pBall1->Y;
+		int xDist = pSprite2->X - pSprite1->X;
+		int yDist = pSprite2->Y - pSprite1->Y;
 		int dist = sqrt(xDist * xDist + yDist * yDist);
 		float angle = atan2(yDist, xDist);
 	 
 		if (dist < BALLSIZE)
 		{
 			// Uncomment the following two lines so the balls repell each other instead of ball1 pushing ball2 away
-			pBall1->X = pBall2->X - (BALLSIZE * cos(angle));
-			pBall1->Y = pBall2->Y - (BALLSIZE * sin(angle));
+			pSprite1->X = pSprite2->X - (BALLSIZE * cos(angle));
+			pSprite1->Y = pSprite2->Y - (BALLSIZE * sin(angle));
 		
-			pBall2->X = pBall1->X + (BALLSIZE * cos(angle));
-			pBall2->Y = pBall1->Y + (BALLSIZE * sin(angle));
+			pSprite2->X = pSprite1->X + (BALLSIZE * cos(angle));
+			pSprite2->Y = pSprite1->Y + (BALLSIZE * sin(angle));
 
 		}
 	}
 }
-
+*/
 // Fix the boundaries of a ball so it doesn't go off the screen
-void fixBoundary(Ball* pBall)
+void fixBoundary(Sprite* pSprite)
 {
-	if(pBall->X + scrollCheckX(pBall->Type)< 0)
-		pBall->X = 0;
-	if(pBall->Y + scrollCheckY(pBall->Type)< 0)
-		pBall->Y = 0;
-//	if(pBall->X > LEVEL_WIDTH - BALLSIZE)
-//		pBall->X = LEVEL_WIDTH - BALLSIZE;
-//	if(pBall->Y > SCREEN_HEIGHT - BALLSIZE)
-//		pBall->Y = SCREEN_HEIGHT - BALLSIZE;
+	if(pSprite->X + scrollCheckX(pSprite->Type)< 0)
+		pSprite->X = 0;
+	if(pSprite->Y + scrollCheckY(pSprite->Type)< 0)
+		pSprite->Y = 0;
+//	if(pSprite->X > LEVEL_WIDTH - BALLSIZE)
+//		pSprite->X = LEVEL_WIDTH - BALLSIZE;
+//	if(pSprite->Y > SCREEN_HEIGHT - BALLSIZE)
+//		pSprite->Y = SCREEN_HEIGHT - BALLSIZE;
 }

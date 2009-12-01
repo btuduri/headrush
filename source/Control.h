@@ -1,13 +1,13 @@
-void moveSprite(Ball *pBall);
+void moveSprite(Sprite *pSprite);
 
-void updateSprite(Ball* pBall);
+void updateSprite(Sprite* pSprite);
 
 float rotateSprite(float fromX, float toX, int type, float oldX);
 
-void checkCollision(Ball* pBall1, Ball* pBall2);
+// void checkCollision(Sprite* pSprite1, Sprite* pSprite2);
 
 // Fix the boundaries of a point so it doesn't go off the screen
-void fixBoundary(Ball* pBall);
+void fixBoundary(Sprite* pSprite);
 
 int scrollCheckX(int type);
 int scrollCheckY(int type);
