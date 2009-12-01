@@ -8,7 +8,7 @@
 #include "Control.h"
 #include "Detect.h"
 
-void moveHead(Ball *pBall)
+void moveSprite(Ball *pBall)
 
 // add control head to this first, only if type == player.
 // if type == normal (enemy) then check and set random movement
@@ -105,7 +105,7 @@ void moveHead(Ball *pBall)
 // updateHead the Ball
 // Here we update the ball based on YSpeed and XSpeed
 
-void updateHead(Ball* pBall)
+void updateSprite(Ball* pBall)
 {
 	float oldBallX = pBall->X;
 	float oldBallY = pBall->Y;
@@ -184,7 +184,7 @@ void updateHead(Ball* pBall)
 	//
 	if (pBall->Type == BALLTYPE_PLAYER)
 	{
-		if (pBall->X + BALLSIZE > SCREEN_WIDTH - BALLSCROLL) 	// have we moved (right) into an area that means scroll
+		if (pBall->X + BALLSIZE > SCREEN_WIDTH - BALLSCROLLX) 	// have we moved (right) into an area that means scroll
 		{
 			if (g_levelX < LEVEL_WIDTH - SCREEN_WIDTH)			// if the level X scroll is < the edge,
 			{
@@ -196,7 +196,7 @@ void updateHead(Ball* pBall)
 			g_levelX = LEVEL_WIDTH - SCREEN_WIDTH;				// let player move and keep scroll stationary
 			}
 		}
-		else if (pBall->X < BALLSCROLL)							// have we moved (left) into an area that means scroll				
+		else if (pBall->X < BALLSCROLLX)							// have we moved (left) into an area that means scroll				
 		{
 			if (g_levelX > 0)									// are we able to scroll?
 			{			
@@ -209,7 +209,7 @@ void updateHead(Ball* pBall)
 			if (pBall->X < 0) pBall->X = 0;					// and allow player to move if possible
 			}
 		}		
-		if (pBall->Y + BALLSIZE > SCREEN_HEIGHT - BALLSCROLL)	// these work the same for Y as they did for X
+		if (pBall->Y + BALLSIZE > SCREEN_HEIGHT - BALLSCROLLY)	// these work the same for Y as they did for X
 		{
 			if (g_levelY < LEVEL_HEIGHT - SCREEN_HEIGHT)
 			{
@@ -221,7 +221,7 @@ void updateHead(Ball* pBall)
 			g_levelY = LEVEL_HEIGHT - SCREEN_HEIGHT;
 			}
 		}
-		else if (pBall->Y < BALLSCROLL)
+		else if (pBall->Y < BALLSCROLLY)
 		{
 			if (g_levelY > 0)
 			{

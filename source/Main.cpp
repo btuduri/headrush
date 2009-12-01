@@ -10,8 +10,9 @@
 
 #include "sprite_ball.h"		// Include header file for sprites
 #include "font.h"
+#include "logo.h"
 #include "background01.h"
-#include "level01.h"
+#include "back01.h"
 #include "level02.h"
 #include "Globals.h"
 #include "Control.h"
@@ -31,8 +32,8 @@ int main(void)
 //	bgInit(3, BgType_Text8bpp, BgSize_T_256x256, BG3_MAP_BASE, BG3_TILE_BASE);
 	
 	bgInitSub(0, BgType_Text4bpp, BgSize_T_256x256, BG0_MAP_BASE_SUB, BG0_TILE_BASE_SUB);
-	int playBG = bgInitSub(1, BgType_Text8bpp, BgSize_T_512x512, BG1_MAP_BASE_SUB, BG1_TILE_BASE_SUB);
-//	bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, BG2_MAP_BASE_SUB, BG2_TILE_BASE_SUB);
+	int playFG = bgInitSub(1, BgType_Text8bpp, BgSize_T_512x512, BG1_MAP_BASE_SUB, BG1_TILE_BASE_SUB);
+	int playBG = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, BG2_MAP_BASE_SUB, BG2_TILE_BASE_SUB);
 //	bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, BG3_MAP_BASE_SUB, BG3_TILE_BASE_SUB);
 
 	oamInit(&oamMain, SpriteMapping_1D_32, false);	// This just sets up an area in RAM for storing temporary OAM data
@@ -58,13 +59,16 @@ int main(void)
 	dmaCopy(fontTiles, BG_TILE_RAM(BG0_TILE_BASE), fontTilesLen);
 	dmaCopy(fontTiles, BG_TILE_RAM_SUB(BG0_TILE_BASE_SUB) , fontTilesLen);
 	
-	dmaCopy(background01Tiles, BG_TILE_RAM(BG1_TILE_BASE), background01TilesLen);
-	dmaCopy(background01Map, BG_MAP_RAM(BG1_MAP_BASE), background01MapLen);
-	dmaCopy(background01Pal, BG_PALETTE, background01PalLen);
+	dmaCopy(logoTiles, BG_TILE_RAM(BG1_TILE_BASE), logoTilesLen);
+	dmaCopy(logoMap, BG_MAP_RAM(BG1_MAP_BASE), logoMapLen);
+	dmaCopy(logoPal, BG_PALETTE, logoPalLen);
 	
-	dmaCopy(level02Tiles, bgGetGfxPtr(playBG), level02TilesLen);
-	dmaCopy(level02Map, bgGetMapPtr(playBG), level02MapLen);
+	dmaCopy(level02Tiles, bgGetGfxPtr(playFG), level02TilesLen);
+	dmaCopy(level02Map, bgGetMapPtr(playFG), level02MapLen);
 	dmaCopy(level02Pal, BG_PALETTE_SUB, level02PalLen);
+	
+	dmaCopy(back01Tiles, bgGetGfxPtr(playBG), back01TilesLen);
+	dmaCopy(back01Map, bgGetMapPtr(playBG), back01MapLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
 
@@ -98,9 +102,9 @@ int main(void)
 		// draw loop
 		for(register int i=0; i<BALLCOUNT; i++)
 		{
-			moveHead(&g_ballArray[i]);
+			moveSprite(&g_ballArray[i]);		// move all active sprites
 			
-			updateHead(&g_ballArray[i]);		// call updateHead with the address of the struct
+			updateSprite(&g_ballArray[i]);		// call updateSprite with the address of the struct
 
 			// Note this only calculates between each ball in the array
 		//	for(int j=0; j<BALLCOUNT; j++)
