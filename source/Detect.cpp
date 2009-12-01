@@ -7,6 +7,7 @@
 #include "Globals.h"
 #include "ColMap.h"
 #include "Control.h"
+#include "Detect.h"
 
 //
 // Check the char block at the centre of our ball
@@ -32,7 +33,7 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
 	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
 	{
-	return bLevelData[((y/8)*64) + (x/8)];
+	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 	}
 	else return 0;
 
@@ -58,7 +59,7 @@ int feetLeft(float Xcoord,float Ycoord, int Type)
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
 	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
 	{
-	return bLevelData[((y/8)*64) + (x/8)];
+	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 	}
 	else return 0;
 
@@ -84,7 +85,7 @@ int feetRight(float Xcoord,float Ycoord, int Type)
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
 	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
 	{
-	return bLevelData[((y/8)*64) + (x/8)];
+	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 	}
 	else return 0;
 
@@ -126,4 +127,17 @@ void fixBoundary(Sprite* pSprite)
 //		pSprite->X = LEVEL_WIDTH - BALLSIZE;
 //	if(pSprite->Y > SCREEN_HEIGHT - BALLSIZE)
 //		pSprite->Y = SCREEN_HEIGHT - BALLSIZE;
+}
+// Return a collision value based on the data in colmap
+// 0-15		=	nothing						= 0
+// 16-31	=	solid wall					= 1
+// 32-47	=	jump-thru platform			= 2
+// etc..
+int collisionDecrypt(int colData)
+{
+	if (colData <=15) return BLANK;
+	else if (colData <=31) return SOLID;
+	else if (colData <=47) return JUMPTHROUGH;
+	
+	else return 0;
 }

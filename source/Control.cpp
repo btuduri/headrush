@@ -149,7 +149,7 @@ void updateSprite(Sprite* pSprite)
 	
 	else	// we already know that we are not jumping!
 	{
-		if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == 0)			// not on the floor
+		if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK)			// not on the floor
 		{	// We are falling (ie. not on the floor)
 			if (pSprite->YSpeed < MAXYSPEED)
 			{
@@ -158,23 +158,23 @@ void updateSprite(Sprite* pSprite)
 			pSprite->Y += pSprite->YSpeed;
 			pSprite->Status = BALLSTATUS_FALLING;
 	
-			if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) != 0) && (pSprite->YSpeed < BOUNCEFACTOR))
+			if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed < BOUNCEFACTOR))
 			{	// We have hit the floor and need to stop bouncing.
 				pSprite->YSpeed = 0;
 				pSprite->Status = BALLSTATUS_NORMAL;
 			}			
-			else if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) != 0) && (pSprite->YSpeed > BOUNCEFACTOR))
+			else if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) >BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed > BOUNCEFACTOR))
 			{	// We have hit the floor and still have some bounce in us
 				pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
 				pSprite->Status = BALLSTATUS_GROUNDTOUCH;
 			}
-			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) != 0)
+			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
 			//	pSprite->Action = ACTION_MOVERIGHT;
 				if (pSprite->XSpeed < ROLLSPEEDLIMIT && pSprite->XSpeed > 0)
 					pSprite->XSpeed = pSprite->XSpeed + ROLLSPEED;
 			}
-			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) != 0)
+			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
 			//	pSprite->Action = ACTION_MOVELEFT;
 				if (pSprite->XSpeed > -ROLLSPEEDLIMIT && pSprite->XSpeed < 0)
