@@ -224,11 +224,13 @@ void updateSprite(Sprite* pSprite)
 			// if the left of the sprite is a platform and the centre is not =
 			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-					pSprite->XSpeed = pSprite->XSpeed + (pSprite->YSpeed / 6);
+			//		pSprite->XSpeed = pSprite->XSpeed + (pSprite->YSpeed / 6);
+			pSprite->XSpeed = (pSprite->Y - oldSpriteY)/1.5F;
 			}
 			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
 					pSprite->XSpeed = pSprite->XSpeed - (pSprite->YSpeed / 6);
+				pSprite->XSpeed = -(pSprite->Y - oldSpriteY)/1.5F;
 			}
 		}
 		else												// we are on the floor
