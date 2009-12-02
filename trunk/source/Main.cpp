@@ -71,6 +71,7 @@ int main(void)
 	dmaCopy(back01Map, bgGetMapPtr(playBG), back01MapLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
+	DrawString("ALPHA 0.00000000001 and a bit", 0, 2, false);
 
 	for(int i=1; i<BALLCOUNT; i++)
 	{
