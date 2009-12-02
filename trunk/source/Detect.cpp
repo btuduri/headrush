@@ -46,12 +46,12 @@ int feetLeft(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 4;
+		x = (int)Xcoord - 2;
 		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX + 4;
+		x = (int)Xcoord + (int)g_levelX - 2;
 		y = (int)Ycoord + (int)g_levelY + 24;
 		ySettle = (int)g_levelY;
 	}
@@ -72,12 +72,12 @@ int feetRight(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 16;
+		x = (int)Xcoord + 24;
 		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX + 16;
+		x = (int)Xcoord + (int)g_levelX + 24;
 		y = (int)Ycoord + (int)g_levelY + 24;
 		ySettle = (int)g_levelY;
 	}
