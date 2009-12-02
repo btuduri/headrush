@@ -125,6 +125,37 @@ void updateSprite(Sprite* pSprite)
 	float oldLevelX = g_levelX;
 	
 	pSprite->X = pSprite->X + pSprite->XSpeed;
+	
+	// Do l/r detection
+	// Right
+	if (pSprite->X > oldSpriteX)	// we are moving RIGHT
+	{
+		
+		if ((bodyRight(pSprite->X -CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyRight(pSprite->X -CURVENIP, pSprite->Y + 16, pSprite->Type) == SOLID))
+		{
+			pSprite->X = oldSpriteX;
+			pSprite->XSpeed = -abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
+		
+		}
+	
+	}
+	else if (pSprite->X < oldSpriteX)	// we are moving LEFT
+	{
+		
+		if ((bodyLeft(pSprite->X +CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X +CURVENIP, pSprite->Y + 16, pSprite->Type) == SOLID))
+		{
+			pSprite->X = oldSpriteX;
+			pSprite->XSpeed = abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
+		
+		}
+	
+	}
+
+
+
+
+
+
 
 	if (pSprite->X + scrollCheckX(pSprite->Type) > LEVEL_WIDTH-BALLSIZE)
 	{
@@ -180,6 +211,8 @@ void updateSprite(Sprite* pSprite)
 			{	// We have hit the floor and still have some bounce in us
 				pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
 				pSprite->Status = BALLSTATUS_GROUNDTOUCH;
+						int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+			pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
 			}
 			
 			// this is not working?
@@ -191,17 +224,11 @@ void updateSprite(Sprite* pSprite)
 			// if the left of the sprite is a platform and the centre is not =
 			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-			// if we are moving right at less that rollspeedLimit, give it a nudge
-			//	if (pSprite->XSpeed < ROLLSPEEDLIMIT && (int)pSprite->XSpeed >= 0)
-					pSprite->XSpeed = pSprite->XSpeed + (pSprite->YSpeed / 4);
-			//	else if (pSprite->XSpeed > -ROLLSPEEDLIMIT && (int)pSprite->XSpeed < 0)
-			//		pSprite->XSpeed = (((abs)pSprite->XSpeed) + (ROLLSPEED * 2));
-				//	pSprite->Action = ACTION_MOVELEFT;
+					pSprite->XSpeed = pSprite->XSpeed + (pSprite->YSpeed / 6);
 			}
 			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-			//	if (pSprite->XSpeed > -ROLLSPEEDLIMIT && (int)pSprite->XSpeed <= 0)
-					pSprite->XSpeed = pSprite->XSpeed - (pSprite->YSpeed / 4);
+					pSprite->XSpeed = pSprite->XSpeed - (pSprite->YSpeed / 6);
 			}
 		}
 		else												// we are on the floor
@@ -241,7 +268,7 @@ void updateSprite(Sprite* pSprite)
 			}
 			else												// otherwise,
 			{
-			g_levelX = 0;										// keep level stationary
+	//		g_levelX = 0;										// keep level stationary
 			if (pSprite->X < 0) pSprite->X = 0;					// and allow player to move if possible
 			}
 		}		

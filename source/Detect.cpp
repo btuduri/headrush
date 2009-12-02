@@ -20,12 +20,12 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 12;
+		x = (int)Xcoord + 10;
 		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX + 12;
+		x = (int)Xcoord + (int)g_levelX + 10;
 		y = (int)Ycoord + (int)g_levelY + 24;
 		ySettle = (int)g_levelY;
 	}
@@ -33,9 +33,16 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
 	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
 	{
-	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
+		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + (x / 8)] );
+		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 4) / 8)] );
+	
+		if ((d1 == d2) && (d1 <= PLATFORM)) return d1;
+		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
+		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) return d2;	
+
+//	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 	}
-	else return 0;
+	return 0;
 
 }
 int feetLeft(float Xcoord,float Ycoord, int Type)
@@ -46,12 +53,12 @@ int feetLeft(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord - 2;
+		x = (int)Xcoord;
 		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX - 2;
+		x = (int)Xcoord + (int)g_levelX;
 		y = (int)Ycoord + (int)g_levelY + 24;
 		ySettle = (int)g_levelY;
 	}
@@ -72,12 +79,12 @@ int feetRight(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 24;
+		x = (int)Xcoord + 23;
 		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX + 24;
+		x = (int)Xcoord + (int)g_levelX + 23;
 		y = (int)Ycoord + (int)g_levelY + 24;
 		ySettle = (int)g_levelY;
 	}
@@ -88,6 +95,49 @@ int feetRight(float Xcoord,float Ycoord, int Type)
 	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 	}
 	else return 0;
+
+}
+
+int bodyRight(float Xcoord,float Ycoord, int Type)
+{
+	int x = 0;
+	int y = 0;
+	int ySettle = 0;
+	
+	if (Type == BALLTYPE_EVILBALL)
+	{
+		x = (int)Xcoord + 23;
+		y = (int)Ycoord;
+	}
+	else if (Type == BALLTYPE_PLAYER)
+	{
+		x = (int)Xcoord + (int)g_levelX + 23;
+		y = (int)Ycoord + (int)g_levelY;
+		ySettle = (int)g_levelY;
+	}
+
+	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
+
+}
+int bodyLeft(float Xcoord,float Ycoord, int Type)
+{
+	int x = 0;
+	int y = 0;
+	int ySettle = 0;
+	
+	if (Type == BALLTYPE_EVILBALL)
+	{
+		x = (int)Xcoord;
+		y = (int)Ycoord;
+	}
+	else if (Type == BALLTYPE_PLAYER)
+	{
+		x = (int)Xcoord + (int)g_levelX;
+		y = (int)Ycoord + (int)g_levelY;
+		ySettle = (int)g_levelY;
+	}
+
+	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 
 }
 // Calculate if there is a collision between two balls
