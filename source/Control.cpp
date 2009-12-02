@@ -81,16 +81,16 @@ void moveSprite(Sprite *pSprite)
 	{
 	case ACTION_MOVELEFT:													// LEFT
 		if ((pSprite->Status == BALLSTATUS_NORMAL) && (pSprite->XSpeed > 0))		// if we are on the ground,
-			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 5);						// then allow a quicker turn
+			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 2);						// then allow a quicker turn
 		else
-			pSprite->XSpeed = pSprite->XSpeed - ACCEL;								// else, normal turn
+			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 1.5);						// else, normal turn
 		if (pSprite->XSpeed < -MAXACCEL) pSprite->XSpeed = -MAXACCEL;				// stop the speed from going past maximum
 		break;
 	case ACTION_MOVERIGHT:													// RIGHT
 		if ((pSprite->Status == BALLSTATUS_NORMAL) && (pSprite->XSpeed < 0))		// if we are on the ground,
-			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 5);						// then allow a quicker turn
+			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 2);						// then allow a quicker turn
 		else
-			pSprite->XSpeed = pSprite->XSpeed + ACCEL;								// else, normal turn
+			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 1.5);								// else, normal turn
 		if (pSprite->XSpeed > MAXACCEL) pSprite->XSpeed = MAXACCEL;				// stop the speed from going past maximum
 		break;
 	case ACTION_SLOW:														// SLOW DOWN
@@ -136,7 +136,7 @@ void updateSprite(Sprite* pSprite)
 			pSprite->X = oldSpriteX;
 			pSprite->XSpeed = -abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
 		
-		}
+		};
 	
 	}
 	else if (pSprite->X < oldSpriteX)	// we are moving LEFT
@@ -149,11 +149,7 @@ void updateSprite(Sprite* pSprite)
 		
 		}
 	
-	}
-
-
-
-
+	};
 
 
 
@@ -186,6 +182,16 @@ void updateSprite(Sprite* pSprite)
 		{	// Y speed is -
 			pSprite->Status = BALLSTATUS_JUMPING;
 		}
+			// Check above our head
+		if (headCentre(pSprite->X, pSprite->Y, pSprite->Type) == SOLID)
+		{
+			// We need to fall now
+			pSprite->YSpeed = 0;
+			pSprite->Status = BALLSTATUS_FALLING;
+			pSprite->Y = oldSpriteY;
+		}
+		
+		
 	}
 
 // ok, now we need to check if there is ground below the ball
@@ -224,13 +230,13 @@ void updateSprite(Sprite* pSprite)
 			// if the left of the sprite is a platform and the centre is not =
 			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-			//		pSprite->XSpeed = pSprite->XSpeed + (pSprite->YSpeed / 6);
-			pSprite->XSpeed = (pSprite->Y - oldSpriteY)/1.5F;
+					pSprite->XSpeed = pSprite->XSpeed + .15;//(pSprite->YSpeed / 6);
+			//pSprite->XSpeed = pSprite->XSpeed + ((pSprite->Y - oldSpriteY)/5.5F);
 			}
 			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-					pSprite->XSpeed = pSprite->XSpeed - (pSprite->YSpeed / 6);
-				pSprite->XSpeed = -(pSprite->Y - oldSpriteY)/1.5F;
+					pSprite->XSpeed = pSprite->XSpeed - .15;//(pSprite->YSpeed / 6);
+			//	pSprite->XSpeed = pSprite->XSpeed - ((pSprite->Y - oldSpriteY)/5.5F);
 			}
 		}
 		else												// we are on the floor
