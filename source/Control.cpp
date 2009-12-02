@@ -176,20 +176,32 @@ void updateSprite(Sprite* pSprite)
 				pSprite->YSpeed = 0;
 				pSprite->Status = BALLSTATUS_NORMAL;
 			}			
-			else if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) >BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed > BOUNCEFACTOR))
+			else if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed > BOUNCEFACTOR))
 			{	// We have hit the floor and still have some bounce in us
 				pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
 				pSprite->Status = BALLSTATUS_GROUNDTOUCH;
 			}
+			
+			// this is not working?
+			// if should follow that is centre = no platform, then we check left and right and see if there
+			// is a platform there, it doesnt?
+			
+			
+			//
+			// if the left of the sprite is a platform and the centre is not =
 			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-				if (pSprite->XSpeed < ROLLSPEEDLIMIT && pSprite->XSpeed > 0)
-					pSprite->XSpeed = pSprite->XSpeed + ROLLSPEED;
+			// if we are moving right at less that rollspeedLimit, give it a nudge
+			//	if (pSprite->XSpeed < ROLLSPEEDLIMIT && (int)pSprite->XSpeed >= 0)
+					pSprite->XSpeed = pSprite->XSpeed + (pSprite->YSpeed / 4);
+			//	else if (pSprite->XSpeed > -ROLLSPEEDLIMIT && (int)pSprite->XSpeed < 0)
+			//		pSprite->XSpeed = (((abs)pSprite->XSpeed) + (ROLLSPEED * 2));
+				//	pSprite->Action = ACTION_MOVELEFT;
 			}
 			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-				if (pSprite->XSpeed > -ROLLSPEEDLIMIT && pSprite->XSpeed < 0)
-					pSprite->XSpeed = pSprite->XSpeed - ROLLSPEED;
+			//	if (pSprite->XSpeed > -ROLLSPEEDLIMIT && (int)pSprite->XSpeed <= 0)
+					pSprite->XSpeed = pSprite->XSpeed - (pSprite->YSpeed / 4);
 			}
 		}
 		else												// we are on the floor
