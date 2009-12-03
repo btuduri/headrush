@@ -7,6 +7,7 @@
 #include "Globals.h"
 #include "Control.h"
 #include "Detect.h"
+#include "Text.h"
 
 void moveSprite(Sprite *pSprite)
 
@@ -115,6 +116,7 @@ void moveSprite(Sprite *pSprite)
 }
 
 
+//----------------------------------------------------------------------------------
 // updateHead the Ball
 // Here we update the ball based on YSpeed and XSpeed
 
@@ -131,18 +133,18 @@ void updateSprite(Sprite* pSprite)
 	if (pSprite->X > oldSpriteX)	// we are moving RIGHT
 	{
 		
-		if ((bodyRight(pSprite->X -CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyRight(pSprite->X -CURVENIP, pSprite->Y + 16, pSprite->Type) == SOLID))
+		if ((bodyRight(pSprite->X -CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyRight(pSprite->X -CURVENIP, pSprite->Y + 18, pSprite->Type) == SOLID))
 		{
 			pSprite->X = oldSpriteX;
 			pSprite->XSpeed = -abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
 		
-		};
+		}
 	
 	}
 	else if (pSprite->X < oldSpriteX)	// we are moving LEFT
 	{
 		
-		if ((bodyLeft(pSprite->X +CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X +CURVENIP, pSprite->Y + 16, pSprite->Type) == SOLID))
+		if ((bodyLeft(pSprite->X +CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X +CURVENIP, pSprite->Y + 18, pSprite->Type) == SOLID))
 		{
 			pSprite->X = oldSpriteX;
 			pSprite->XSpeed = abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
@@ -152,7 +154,7 @@ void updateSprite(Sprite* pSprite)
 	};
 
 
-
+/*
 	if (pSprite->X + scrollCheckX(pSprite->Type) > LEVEL_WIDTH-BALLSIZE)
 	{
 		pSprite->X = oldSpriteX;
@@ -160,10 +162,9 @@ void updateSprite(Sprite* pSprite)
 	}
 	else if (pSprite->X + scrollCheckX(pSprite->Type) < 0)
 	{
-	//	pSprite->X = g_levelX;
 		pSprite->XSpeed = abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
 	}
-	
+*/
 // ok, now account for the jump, this needs to check Status and see if we are jumping (or bouncing)
 // but... It only really needs to work with upward movement!
 	
@@ -190,21 +191,17 @@ void updateSprite(Sprite* pSprite)
 			pSprite->Status = BALLSTATUS_FALLING;
 			pSprite->Y = oldSpriteY;
 		}
-		
-		
-	}
+	};
 
 // ok, now we need to check if there is ground below the ball
 // use 'feetCentre' to check the centre of a ball, the value is returned!
 	
-	else	// we already know that we are not jumping!
+	if (pSprite->Status != BALLSTATUS_JUMPING)	// we already know that we are not jumping!
 	{
 		if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK)			// not on the floor
 		{	// We are falling (ie. not on the floor)
-			if (pSprite->YSpeed < MAXYSPEED)
-			{
-				pSprite->YSpeed += GRAVITY;
-			};
+			if (pSprite->YSpeed < MAXYSPEED) pSprite->YSpeed += GRAVITY;
+			
 			pSprite->Y += pSprite->YSpeed;
 			pSprite->Status = BALLSTATUS_FALLING;
 	
@@ -217,26 +214,41 @@ void updateSprite(Sprite* pSprite)
 			{	// We have hit the floor and still have some bounce in us
 				pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
 				pSprite->Status = BALLSTATUS_GROUNDTOUCH;
-						int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-			pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
+				int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+				pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
 			}
 			
-			// this is not working?
-			// if should follow that is centre = no platform, then we check left and right and see if there
-			// is a platform there, it doesnt?
 			
 			
 			//
 			// if the left of the sprite is a platform and the centre is not =
 			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-					pSprite->XSpeed = pSprite->XSpeed + .15;//(pSprite->YSpeed / 6);
-			//pSprite->XSpeed = pSprite->XSpeed + ((pSprite->Y - oldSpriteY)/5.5F);
+				if (pSprite->YSpeed > BOUNCEFACTOR + GRAVITY + 0.5)
+				{	// bounce off corner
+					if (pSprite->YSpeed > BOUNCEFACTOR) pSprite->XSpeed = pSprite->XSpeed + ((pSprite->YSpeed /2.2));
+					pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
+					pSprite->Status = BALLSTATUS_GROUNDTOUCH;					
+				}
+				else 
+				{	// Roll right off platfrom
+					pSprite->XSpeed = pSprite->XSpeed + (0.05 + (pSprite->YSpeed /5));
+					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY / 2);
+				};
 			}
 			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{
-					pSprite->XSpeed = pSprite->XSpeed - .15;//(pSprite->YSpeed / 6);
-			//	pSprite->XSpeed = pSprite->XSpeed - ((pSprite->Y - oldSpriteY)/5.5F);
+				if (pSprite->YSpeed > BOUNCEFACTOR + GRAVITY + 0.5)
+				{	// bounce off corner
+					if (pSprite->YSpeed > BOUNCEFACTOR) pSprite->XSpeed = pSprite->XSpeed - ((pSprite->YSpeed /2.2));
+					pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
+					pSprite->Status = BALLSTATUS_GROUNDTOUCH;					
+				}
+				else 
+				{	// Roll left off platfrom
+					pSprite->XSpeed = pSprite->XSpeed - (0.05 + (pSprite->YSpeed /5));
+					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY / 2);
+				};
 			}
 		}
 		else												// we are on the floor
@@ -249,7 +261,7 @@ void updateSprite(Sprite* pSprite)
 			// we are settled, so the ball can return to normal play
 			pSprite->Status = BALLSTATUS_NORMAL;
 		}
-	}
+	};
 	//
 	// ok, we need to scroll the screen if this is a player ball! (ulp)
 	//

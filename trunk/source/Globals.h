@@ -56,7 +56,7 @@ struct Sprite							// define the elements that construct our 'balls'
 #define		GRAVITY				0.195			// force of gravity									(affects jump and bounce)
 #define		BOUNCEFACTOR		1.25			// used to reverse a vertical drop for a bounce		( < for more bounces)
 #define		BOUNCEFACTORAMOUNT	1.55			// the amount of bounce to allow on a vertical drop	( > for smaller bounce)
-#define		MAXYSPEED			5				// maximum speed you can drop
+#define		MAXYSPEED			4.5				// maximum speed you can drop
 #define		ROLLSPEEDLIMIT		1				// speed at which a roll works of a platform
 #define		ROLLSPEED			0.15			// amount ball speed is affected by a roll
 
@@ -66,7 +66,7 @@ struct Sprite							// define the elements that construct our 'balls'
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
 #define		CURVENIP			0				// detect offset for curve
-#define		BALLCOUNT			24				// Number of balls
+#define		BALLCOUNT			1				// Number of balls
 
 	// Defines for player (ball) status
 	
