@@ -95,10 +95,21 @@ int main(void)
 	g_levelX = 0;
 	g_levelY = 512-192;
 
+
+	char buffer[20];
 	while(1)
 	{
-	
-		drawMap();
+
+	sprintf(buffer, "%d X ",(int)g_spriteArray[0].X) ;
+	DrawString(buffer, 10, 21, false);
+	sprintf(buffer, "%d Y ",(int)g_spriteArray[0].Y) ;
+	DrawString(buffer, 16, 21, false);	
+	sprintf(buffer, "%d A ",(int)g_spriteArray[0].Action) ;
+	DrawString(buffer, 10, 23, false);	
+	sprintf(buffer, "%d S ",(int)g_spriteArray[0].Status) ;
+	DrawString(buffer, 16, 23, false);
+
+	drawMap();
 	
 		// draw loop
 		for(register int i=0; i<BALLCOUNT; i++)
