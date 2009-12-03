@@ -133,28 +133,28 @@ void updateSprite(Sprite* pSprite)
 	if (pSprite->X > oldSpriteX)	// we are moving RIGHT
 	{
 		
-		if ((bodyRight(pSprite->X -CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyRight(pSprite->X -CURVENIP, pSprite->Y + 18, pSprite->Type) == SOLID))
+		if ((bodyRight(pSprite->X, pSprite->Y, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 16, pSprite->Type) == SOLID))
 		{
 			pSprite->X = oldSpriteX;
 			pSprite->XSpeed = -abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
 		
-		}
+		};
 	
 	}
 	else if (pSprite->X < oldSpriteX)	// we are moving LEFT
 	{
 		
-		if ((bodyLeft(pSprite->X +CURVENIP, pSprite->Y, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X +CURVENIP, pSprite->Y + 18, pSprite->Type) == SOLID))
+		if ((bodyLeft(pSprite->X, pSprite->Y, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyLeft(pSprite->X, pSprite->Y + 16, pSprite->Type) == SOLID))
 		{
 			pSprite->X = oldSpriteX;
 			pSprite->XSpeed = abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
 		
-		}
+		};
 	
 	};
 
 
-/*
+/* Meeded perhaps for areas without side walls (if we use them)
 	if (pSprite->X + scrollCheckX(pSprite->Type) > LEVEL_WIDTH-BALLSIZE)
 	{
 		pSprite->X = oldSpriteX;
@@ -168,7 +168,7 @@ void updateSprite(Sprite* pSprite)
 // ok, now account for the jump, this needs to check Status and see if we are jumping (or bouncing)
 // but... It only really needs to work with upward movement!
 	
-	if ((pSprite->Status == BALLSTATUS_JUMPING || pSprite->Status == BALLSTATUS_GROUNDTOUCH) && pSprite->YSpeed < 0)
+	if ((pSprite->Status == BALLSTATUS_JUMPING || pSprite->Status == BALLSTATUS_GROUNDTOUCH) && pSprite->YSpeed <= 0)
 	{
 		// jumping up!
 		pSprite->Y += pSprite->YSpeed;	// y speed will be negative
@@ -218,42 +218,70 @@ void updateSprite(Sprite* pSprite)
 				pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
 			}
 			
-			
-			
 			//
-			// if the left of the sprite is a platform and the centre is not =
-			else if (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
+			// if the 'LEFT' of the sprite is a platform and the centre is not a PLATFORM
+			else if ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
 			{
-				if (pSprite->YSpeed > BOUNCEFACTOR + GRAVITY + 0.5)
+				if (pSprite->YSpeed > (BOUNCEFACTOR * 2))
 				{	// bounce off corner
-					if (pSprite->YSpeed > BOUNCEFACTOR) pSprite->XSpeed = pSprite->XSpeed + ((pSprite->YSpeed /2.2));
+					if (pSprite->X > oldSpriteX) 	// going right
+					pSprite->XSpeed = pSprite->XSpeed + ((pSprite->YSpeed /2.5));
+					else							// going left
+					pSprite->XSpeed = pSprite->XSpeed + ((pSprite->YSpeed /3.5)); //- ((pSprite->YSpeed /3.5));
+
 					pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
-					pSprite->Status = BALLSTATUS_GROUNDTOUCH;					
-				}
-				else 
-				{	// Roll right off platfrom
-					pSprite->XSpeed = pSprite->XSpeed + (0.05 + (pSprite->YSpeed /5));
-					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY / 2);
-				};
-			}
-			else if (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
-			{
-				if (pSprite->YSpeed > BOUNCEFACTOR + GRAVITY + 0.5)
-				{	// bounce off corner
-					if (pSprite->YSpeed > BOUNCEFACTOR) pSprite->XSpeed = pSprite->XSpeed - ((pSprite->YSpeed /2.2));
-					pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
-					pSprite->Status = BALLSTATUS_GROUNDTOUCH;					
-				}
+					int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+					pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);								}
 				else 
 				{	// Roll left off platfrom
-					pSprite->XSpeed = pSprite->XSpeed - (0.05 + (pSprite->YSpeed /5));
+					if (pSprite->X < oldSpriteX) 	// going left
+						{
+						int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+						pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
+						pSprite->YSpeed = (pSprite->YSpeed / BOUNCEFACTORAMOUNT);
+					
+						}
+					else							// going Right
+						{
+						pSprite->XSpeed = pSprite->XSpeed + (0.025 + (pSprite->YSpeed /5));
 					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY / 2);
+						}
+					
 				};
 			}
+			// if the 'RIGHT' of the sprite is a platform and the centre is not a PLATFORM
+			else if ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
+			{	// Right curve of ball
+				if (pSprite->YSpeed > (BOUNCEFACTOR * 2))
+				{	// bounce off corner
+					if (pSprite->X < oldSpriteX) 	// going left
+					pSprite->XSpeed = pSprite->XSpeed - ((pSprite->YSpeed /2.5));
+					else							// going right
+					pSprite->XSpeed = pSprite->XSpeed - ((pSprite->YSpeed /3.5)); //- ((pSprite->YSpeed /3.5));
+
+					pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
+					int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+					pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);								}
+				else 
+				{	// Roll left off platfrom
+					if (pSprite->X > oldSpriteX) 	// going right
+						{
+						int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+						pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
+						pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
+					
+						}
+					else							// going left
+						{
+						pSprite->XSpeed = pSprite->XSpeed - (0.025 + (pSprite->YSpeed /5));
+					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY / 2);
+						}
+					
+				};
+			};
 		}
 		else												// we are on the floor
 		{
-			// g_reJump = 0;
 			// This will settle the ball to a platform, taking into count the Y level position if 
 			// the ball is the player.
 			int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
