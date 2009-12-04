@@ -130,8 +130,10 @@ void updateSprite(Sprite* pSprite)
 	float oldSpriteX = pSprite->X;
 	float oldSpriteY = pSprite->Y;
 	float oldLevelX = g_levelX;
+	float oldXSpeed = pSprite->XSpeed;
 	
 	pSprite->X = pSprite->X + pSprite->XSpeed;
+	float spritePreBounce = pSprite->X;
 	
 	// Do l/r detection
 	// Right
@@ -197,7 +199,6 @@ void updateSprite(Sprite* pSprite)
 			pSprite->Y = oldSpriteY;
 		}
 	};
-
 // ok, now we need to check if there is ground below the ball
 // use 'feetCentre' to check the centre of a ball, the value is returned!
 	
@@ -293,6 +294,28 @@ void updateSprite(Sprite* pSprite)
 			pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
 			// we are settled, so the ball can return to normal play
 			pSprite->Status = BALLSTATUS_NORMAL;
+			
+			//
+			// Now we need to check our speed and if we are going right and bottom of right check = SOLID and top 2
+			// !=Solid, a little bounce?
+			
+			if ((spritePreBounce > pSprite->X) && (oldXSpeed > 1.25))	// we are moving RIGHT
+			{
+				if ((bodyRight(spritePreBounce, pSprite->Y, pSprite->Type) != SOLID) && (bodyRight(spritePreBounce, pSprite->Y + 8, pSprite->Type) != SOLID) && (bodyRight(spritePreBounce, pSprite->Y + 16, pSprite->Type) == SOLID))
+				{
+					pSprite->XSpeed = oldXSpeed;
+					pSprite->Y -= 0.25;
+				}
+			}
+			else if ((spritePreBounce < pSprite->X) && (oldXSpeed < - 1.25))	// we are moving LEFT
+			{
+				if ((bodyLeft(spritePreBounce, pSprite->Y, pSprite->Type) != SOLID) && (bodyLeft(spritePreBounce, pSprite->Y + 8, pSprite->Type) != SOLID) && (bodyLeft(spritePreBounce, pSprite->Y + 16, pSprite->Type) == SOLID))
+				{
+					pSprite->XSpeed = oldXSpeed;
+					pSprite->Y -= 0.25;
+				}
+			}
+			
 		}
 	};
 	//
