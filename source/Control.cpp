@@ -37,17 +37,16 @@ void moveSprite(Sprite *pSprite)
 		else
 		{
 		pSprite->Action = ACTION_SLOW;
-		}
+		};
 		
 		// check for jump.								(USE A)
 		
 		// check players status for the setting of jump, and if true, do not init until false
 		// if jump is held, do not allow another jump!
-		if ((held & KEY_A) || (g_reJump == TRUE))
+		if (held & KEY_A || g_reJump == TRUE)
 		{
-			if (g_jumpTrap == 0 || g_reJump == TRUE)
-			{
-				//	pSprite->Action = ACTION_JUMP;
+			if (g_jumpTrap == FALSE || g_reJump == TRUE)
+			{	// time to jump
 				if ((pSprite->Status != BALLSTATUS_JUMPING) && (pSprite->Status != BALLSTATUS_FALLING))
 				{
 					pSprite->Status = BALLSTATUS_JUMPING;
@@ -55,6 +54,12 @@ void moveSprite(Sprite *pSprite)
 					g_reJump = FALSE;
 					g_jumpTrap = TRUE;
 				}
+				else if (pSprite->YSpeed > 0) //if (g_jumpTrap == FALSE)
+		//	}
+		//	else if (g_jumpTrap == FALSE && g_reJump == FALSE)
+		//	{
+				g_reJump = TRUE;
+				DrawString("Double", 0, 6, false);
 			}
 		}
 		else

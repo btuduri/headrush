@@ -71,12 +71,12 @@ int main(void)
 	dmaCopy(back01Map, bgGetMapPtr(playBG), back01MapLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
-	DrawString("ALPHA 0.00000000001 and a bit", 0, 2, false);
+	DrawString("ALPHA 0.00000000002 and a bit", 0, 2, false);
 
 	for(int i=1; i<BALLCOUNT; i++)
 	{
 		g_spriteArray[i].Action = ACTION_NONE;	
-		g_spriteArray[i].X = 240; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
+		g_spriteArray[i].X = 40; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
 		g_spriteArray[i].Y = 32; //(rand() % (LEVEL_HEIGHT-(BALLSIZE * 2))) + BALLSIZE;
 		g_spriteArray[i].Type = BALLTYPE_EVILBALL;
 		g_spriteArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
