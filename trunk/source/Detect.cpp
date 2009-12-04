@@ -33,8 +33,8 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
 	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
 	{
-		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + ((x - 2) / 8)] );
-		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 6) / 8)] );
+		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + ((x - 0) / 8)] );
+		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 4) / 8)] );
 	
 		if ((d1 == d2) && (d1 <= PLATFORM)) return d1;
 		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
