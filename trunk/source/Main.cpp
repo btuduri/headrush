@@ -108,7 +108,10 @@ int main(void)
 	DrawString(buffer, 10, 23, false);	
 	sprintf(buffer, "%d S ",(int)g_spriteArray[0].Status) ;
 	DrawString(buffer, 16, 23, false);
-
+	sprintf(buffer, "%d X OFF ",(((int)g_spriteArray[0].X) + (int) g_levelX) & 7) ;
+	DrawString(buffer, 16, 19, false);
+	sprintf(buffer, "%d Y OFF ",(((int)g_spriteArray[0].Y) + (int) g_levelY) & 7) ;
+	DrawString(buffer, 25, 19, false);
 	drawMap();
 	
 		// draw loop

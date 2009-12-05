@@ -175,7 +175,7 @@ void updateSprite(Sprite* pSprite)
 // ok, now account for the jump, this needs to check Status and see if we are jumping (or bouncing)
 // but... It only really needs to work with upward movement!
 	
-	if ((pSprite->Status == BALLSTATUS_JUMPING || pSprite->Status == BALLSTATUS_GROUNDTOUCH) && pSprite->YSpeed <= 0)
+	if ((pSprite->Status == BALLSTATUS_JUMPING) && (pSprite->YSpeed <= 0))
 	{
 		// jumping up!
 		pSprite->Y += pSprite->YSpeed;	// y speed will be negative
@@ -204,93 +204,62 @@ void updateSprite(Sprite* pSprite)
 	
 	if (pSprite->Status != BALLSTATUS_JUMPING)	// we already know that we are not jumping!
 	{
-		if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK)			// not on the floor
+		if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK)  &&  ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM))  &&  ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM)))			// not on the floor
 		{	// We are falling (ie. not on the floor)
 			if (pSprite->YSpeed < MAXYSPEED) pSprite->YSpeed += GRAVITY;
-			
+			{
 			pSprite->Y += pSprite->YSpeed;
 			pSprite->Status = BALLSTATUS_FALLING;
-
-	
-			if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed < BOUNCEFACTOR))
+			}
+			if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{	// We have hit the floor and need to stop bouncing.
-				pSprite->YSpeed = 0;
-				pSprite->Status = BALLSTATUS_NORMAL;
-				int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-				pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
+			//	pSprite->YSpeed = 0;
+			//	pSprite->Status = BALLSTATUS_NORMAL;
 			}			
-/*			else if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed > BOUNCEFACTOR))
-			{	// We have hit the floor and still have some bounce in us
-				pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
-				pSprite->Status = BALLSTATUS_GROUNDTOUCH;
-				int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-				pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
-			}
-*/			
-			//
-			// if the 'LEFT' of the sprite is a platform and the centre is not a PLATFORM
-			else if ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
+		
+/*			else
 			{
-				if (pSprite->YSpeed > (BOUNCEFACTOR * 2))
-				{	// bounce off corner
-					if (pSprite->X > oldSpriteX) 	// going right
-					pSprite->XSpeed = pSprite->XSpeed + ((pSprite->YSpeed /2.5));
-					else							// going left
-					pSprite->XSpeed = pSprite->XSpeed + ((pSprite->YSpeed /3.5)); //- ((pSprite->YSpeed /3.5));
-
-					pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
-					int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-					pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);								}
-				else 
-				{	// Roll left off platfrom
-					if (pSprite->X < oldSpriteX) 	// going left
-						{
-						int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-						pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
-						pSprite->YSpeed = (pSprite->YSpeed / BOUNCEFACTORAMOUNT);
-					
-						}
-					else							// going Right
-						{
-						pSprite->XSpeed = pSprite->XSpeed + (0.025 + (pSprite->YSpeed /5));
-					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY / 2);
-						}
-					
-				};
-			}
-			// if the 'RIGHT' of the sprite is a platform and the centre is not a PLATFORM
-			else if ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
-			{	// Right curve of ball
-				if (pSprite->YSpeed > (BOUNCEFACTOR * 2))
-				{	// bounce off corner
-					if (pSprite->X < oldSpriteX) 	// going left
-					pSprite->XSpeed = pSprite->XSpeed - ((pSprite->YSpeed /2.5));
-					else							// going right
-					pSprite->XSpeed = pSprite->XSpeed - ((pSprite->YSpeed /3.5)); //- ((pSprite->YSpeed /3.5));
-
-					pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
-					int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-					pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);								}
-				else 
-				{	// Roll left off platfrom
-					if (pSprite->X > oldSpriteX) 	// going right
-						{
-						int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-						pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
-						pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
-					
-						}
-					else							// going left
-						{
-						pSprite->XSpeed = pSprite->XSpeed - (0.025 + (pSprite->YSpeed /5));
-					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY / 2);
-						}
-					
-				};
-			};
+				if ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
+				{
+/*					if (spritePreBounce > pSprite->X)	
+						pSprite->Action = ACTION_MOVELEFT;
+					else
+						pSprite->XSpeed = pSprite->XSpeed + (0.025 + (pSprite->YSpeed /16));
+					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY);	
+					pSprite->Status = BALLSTATUS_NORMAL;
+					pSprite->Y = oldSpriteY;
+				}
+				if ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
+*/		
 		}
-		else												// we are on the floor
+		else if ( ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
+		{	// This checks if we are part on a platforms edge with the RIGHT of the ball, and Ypos to match
+
+			DrawString("RIGHT", 20, 1, false);
+			int XPos = ((int)pSprite->X + (int)scrollCheckX(pSprite->X)) & 7;
+
+			int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+			ySettle = ((ySettle << 3) - (int)scrollCheckY(pSprite->Type));
+					 
+			pSprite->Y = (int)ySettle + (7-(XPos & 7));
+			pSprite->YSpeed = 0;
+		//	pSprite->XSpeed -= (pSprite->YSpeed / 16); //0.05;
+			pSprite->Status = BALLSTATUS_NORMAL;	
+		}
+/*		else if ( ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
 		{
+			DrawString("LEFT ", 20, 1, false);
+			int XPos = ((int)pSprite->X + (int)scrollCheckX(pSprite->X)) & 7;
+
+			int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+			ySettle = ((ySettle << 3) - (int)scrollCheckY(pSprite->Type));
+					 
+			pSprite->Y = ySettle + XPos;
+			pSprite->Status = BALLSTATUS_NORMAL;	
+		}
+*/		else												// we are on the floor
+		{
+			DrawString("     ", 20, 1, false);
 			// This will settle the ball to a platform, taking into count the Y level position if 
 			// the ball is the player.
 			int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
@@ -301,13 +270,15 @@ void updateSprite(Sprite* pSprite)
 			//
 			// Now we need to check our speed and if we are going right and bottom of right check = SOLID and top 2
 			// !=Solid, a little bounce?
-			
+/*			
 			if ((spritePreBounce > pSprite->X) && (oldXSpeed > 1.25))	// we are moving RIGHT
 			{
 				if ((bodyRight(spritePreBounce, pSprite->Y, pSprite->Type) != SOLID) && (bodyRight(spritePreBounce, pSprite->Y + 8, pSprite->Type) != SOLID) && (bodyRight(spritePreBounce, pSprite->Y + 16, pSprite->Type) == SOLID))
 				{
 					pSprite->XSpeed = oldXSpeed;
 					pSprite->Y -= 0.25;
+					pSprite->Status = BALLSTATUS_JUMPING;
+					pSprite->YSpeed = - 2;
 				}
 			}
 			else if ((spritePreBounce < pSprite->X) && (oldXSpeed < - 1.25))	// we are moving LEFT
@@ -316,9 +287,11 @@ void updateSprite(Sprite* pSprite)
 				{
 					pSprite->XSpeed = oldXSpeed;
 					pSprite->Y -= 0.25;
+				pSprite->Status = BALLSTATUS_JUMPING;
+					pSprite->YSpeed = - 2;
 				}
 			}
-			
+*/			
 		}
 	};
 	//
