@@ -210,20 +210,23 @@ void updateSprite(Sprite* pSprite)
 			
 			pSprite->Y += pSprite->YSpeed;
 			pSprite->Status = BALLSTATUS_FALLING;
+
 	
 			if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed < BOUNCEFACTOR))
 			{	// We have hit the floor and need to stop bouncing.
 				pSprite->YSpeed = 0;
 				pSprite->Status = BALLSTATUS_NORMAL;
+				int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
+				pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
 			}			
-			else if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed > BOUNCEFACTOR))
+/*			else if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM && (pSprite->YSpeed > BOUNCEFACTOR))
 			{	// We have hit the floor and still have some bounce in us
 				pSprite->YSpeed = -(pSprite->YSpeed / BOUNCEFACTORAMOUNT);
 				pSprite->Status = BALLSTATUS_GROUNDTOUCH;
 				int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
 				pSprite->Y = (ySettle << 3) - (int)scrollCheckY(pSprite->Type);
 			}
-			
+*/			
 			//
 			// if the 'LEFT' of the sprite is a platform and the centre is not a PLATFORM
 			else if ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))

@@ -54,7 +54,7 @@ struct Sprite							// define the elements that construct our 'balls'
 #define		BOUNCE_X_DEADEN		1.055F			// how much to deaden a horzontal bounce
 #define		JUMPSPEED			4.1F			// initial speed of a jump (negetive)				( > higher jump)
 #define		GRAVITY				0.195F			// force of gravity									(affects jump and bounce)
-#define		BOUNCEFACTOR		1.25F			// used to reverse a vertical drop for a bounce		( < for more bounces)
+#define		BOUNCEFACTOR		0			// used to reverse a vertical drop for a bounce		( < for more bounces)
 #define		BOUNCEFACTORAMOUNT	1.55F			// the amount of bounce to allow on a vertical drop	( > for smaller bounce)
 #define		MAXYSPEED			4.5F			// maximum speed you can drop
 #define		ROLLSPEEDLIMIT		1F				// speed at which a roll works of a platform
