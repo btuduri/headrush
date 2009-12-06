@@ -102,7 +102,7 @@ int main(void)
 
 	sprintf(buffer, "%d X ",(int)g_spriteArray[0].X) ;
 	DrawString(buffer, 10, 21, false);
-	sprintf(buffer, "%d Y ",(int)g_spriteArray[0].Y) ;
+	sprintf(buffer, "%d Y ",(int)g_spriteArray[0].Y + (int) g_levelY) ;
 	DrawString(buffer, 16, 21, false);	
 	sprintf(buffer, "%d A ",(int)g_spriteArray[0].Action) ;
 	DrawString(buffer, 10, 23, false);	
