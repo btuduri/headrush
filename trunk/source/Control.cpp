@@ -138,10 +138,14 @@ void updateSprite(Sprite* pSprite)
 	// Right
 	if (pSprite->X > oldSpriteX)	// we are moving RIGHT
 	{
-/*		
+	
 		if ((bodyRight(pSprite->X, pSprite->Y, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 8, pSprite->Type) == SOLID) || (bodyRight(pSprite->X, pSprite->Y + 16, pSprite->Type) == SOLID))
 		{
 			pSprite->X = oldSpriteX;
+		//	int XSettle = ((int)(pSprite->X) + (int)scrollCheckX(pSprite->Type));
+		//	pSprite->X = ((XSettle >> 3) << 3) - ((int)scrollCheckX(pSprite->Type));
+
+		//	pSprite->X = oldSpriteX;
 			pSprite->XSpeed = -abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
 		
 		};
@@ -156,7 +160,7 @@ void updateSprite(Sprite* pSprite)
 			pSprite->XSpeed = abs(pSprite->XSpeed / BOUNCE_X_DEADEN);
 		
 		};
-*/	
+	
 	};
 
 
@@ -213,13 +217,11 @@ void updateSprite(Sprite* pSprite)
 			}
 			if (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) > BLANK && feetCentre(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)
 			{	// We have hit the floor and need to stop bouncing.
-	
-			DrawString("GROUND", 20, 1, false);
+				
+				DrawString("GROUND", 20, 1, false);
+			
 				pSprite->YSpeed = 0;
 				pSprite->Status = BALLSTATUS_NORMAL;
-				int ySettle = round((pSprite->Y) + scrollCheckY(pSprite->Type));
-				pSprite->Y = ((ySettle >> 3) << 3) - (scrollCheckY(pSprite->Type));
-				
 			}			
 		
 /*			else
@@ -240,31 +242,21 @@ void updateSprite(Sprite* pSprite)
 		else if ( ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
 		{	// This checks if we are part on a platforms edge with the RIGHT of the ball, and Ypos to match
 
-			DrawString("RIGHT ", 20, 1, false);
+			DrawString("RIGHT ", 22, 1, false);
 		
-		//	int XPos = (round(pSprite->X) + (int)scrollCheckX(pSprite->X));
-			int XPos = scrollCheckX(pSprite->X);
-			XPos += (pSprite->X);
-			
-			
-	char buffer[20];	
-	sprintf(buffer, "%d X SOF",XPos) ;
-	DrawString(buffer, 0, 5, false);			
-
-			XPos = XPos & 7;
-	
-	sprintf(buffer, "%d X RND",XPos) ;
-	DrawString(buffer, 0, 6, false);
-
-
-
+			int XPos = (((int)pSprite->X) + (int)scrollCheckX(pSprite->Type)) & 7;	
 			int ySettle = ((int)(pSprite->Y) + (int)scrollCheckY(pSprite->Type));
 			pSprite->Y = ((ySettle >> 3) << 3) - ((int)scrollCheckY(pSprite->Type));
 			
 			pSprite->Y += (7 - XPos);
 
 			pSprite->YSpeed = 0;
-			pSprite->Status = BALLSTATUS_NORMAL;	
+			pSprite->Status = BALLSTATUS_NORMAL;			
+			
+			
+			char buffer[20];	
+			sprintf(buffer, "%d X SOF",XPos) ;
+			DrawString(buffer, 0, 5, false);				
 		}
 /*		else if ( ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
 		{
@@ -277,14 +269,14 @@ void updateSprite(Sprite* pSprite)
 			pSprite->Y = ySettle + XPos;
 			pSprite->Status = BALLSTATUS_NORMAL;	
 		}
-*/		else												// we are on the floor
+*/		else  //if (( ( (int)pSprite->Y + (int)g_levelY +24) & 7) < MAXYSPEED)										// we are on the floor
 		{
 	//		DrawString("      ", 20, 1, false);
 			// This will settle the ball to a platform, taking into count the Y level position if 
 			// the ball is the player.
 
-			int ySettle = int((pSprite->Y) + scrollCheckY(pSprite->Type));
-			pSprite->Y = ((ySettle >> 3) << 3) - (scrollCheckY(pSprite->Type));
+			int ySettle = int((pSprite->Y) + (int)scrollCheckY(pSprite->Type));
+			pSprite->Y = ((ySettle >> 3) << 3) - ((int)scrollCheckY(pSprite->Type));
 			pSprite->Status = BALLSTATUS_NORMAL;
 			
 			//
