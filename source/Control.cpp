@@ -244,15 +244,16 @@ void updateSprite(Sprite* pSprite)
 
 			DrawString("RIGHT ", 22, 1, false);
 		
-			int XPos = (((int)pSprite->X) + (int)scrollCheckX(pSprite->Type)) & 7;	
-			int ySettle = ((int)(pSprite->Y) + (int)scrollCheckY(pSprite->Type));
+			int XPos = ((((int)pSprite->X -1) + scrollCheckX(pSprite->Type) )) & 7;
+	
+			int ySettle = int((pSprite->Y) + (int)scrollCheckY(pSprite->Type));
 			pSprite->Y = ((ySettle >> 3) << 3) - ((int)scrollCheckY(pSprite->Type));
 			
-			pSprite->Y += (7 - XPos);
+			pSprite->Y += (7-XPos);
 
 			pSprite->YSpeed = 0;
 			pSprite->Status = BALLSTATUS_NORMAL;			
-			
+			pSprite->XSpeed -= 0.075;
 			
 			char buffer[20];	
 			sprintf(buffer, "%d X SOF",XPos) ;
@@ -263,9 +264,6 @@ void updateSprite(Sprite* pSprite)
 			DrawString("LEFT ", 20, 1, false);
 			int XPos = ((int)pSprite->X + (int)scrollCheckX(pSprite->X)) & 7;
 
-			int ySettle = ((int)pSprite->Y + (int)scrollCheckY(pSprite->Type)) >> 3;
-			ySettle = ((ySettle << 3) - (int)scrollCheckY(pSprite->Type));
-					 
 			pSprite->Y = ySettle + XPos;
 			pSprite->Status = BALLSTATUS_NORMAL;	
 		}
@@ -275,7 +273,7 @@ void updateSprite(Sprite* pSprite)
 			// This will settle the ball to a platform, taking into count the Y level position if 
 			// the ball is the player.
 
-			int ySettle = int((pSprite->Y) + (int)scrollCheckY(pSprite->Type));
+			int ySettle = (int)((pSprite->Y) + scrollCheckY(pSprite->Type));
 			pSprite->Y = ((ySettle >> 3) << 3) - ((int)scrollCheckY(pSprite->Type));
 			pSprite->Status = BALLSTATUS_NORMAL;
 			
@@ -316,7 +314,7 @@ void updateSprite(Sprite* pSprite)
 			if (g_levelX < LEVEL_WIDTH - SCREEN_WIDTH)			// if the level X scroll is < the edge,
 			{
 			g_levelX = g_levelX + (pSprite->X - oldSpriteX);	// scroll level
-			pSprite->X = oldSpriteX;							// and keep player stationary
+			pSprite->X = oldSpriteX; //(SCREEN_WIDTH - BALLSCROLLX) - BALLSIZE;							// and keep player stationary
 			}
 			else												// if not,
 			{
@@ -328,7 +326,7 @@ void updateSprite(Sprite* pSprite)
 			if (g_levelX > 0)									// are we able to scroll?
 			{			
 			g_levelX = g_levelX - (oldSpriteX - pSprite->X);	// if so, scroll map and
-			pSprite->X = oldSpriteX;							// keep player stationary.
+			pSprite->X = BALLSCROLLX;							// keep player stationary.
 			}
 			else												// otherwise,
 			{
@@ -341,7 +339,7 @@ void updateSprite(Sprite* pSprite)
 			if (g_levelY < LEVEL_HEIGHT - SCREEN_HEIGHT)
 			{
 			g_levelY = g_levelY + (pSprite->Y - oldSpriteY);
-			pSprite->Y = oldSpriteY;
+			pSprite->Y = (SCREEN_HEIGHT - BALLSCROLLY) - BALLSIZE;
 			}
 			else
 			{
@@ -353,7 +351,7 @@ void updateSprite(Sprite* pSprite)
 			if (g_levelY > 0)
 			{
 			g_levelY = g_levelY - (oldSpriteY - pSprite->Y);
-			pSprite->Y = oldSpriteY;
+			pSprite->Y = BALLSCROLLY; //oldSpriteY;
 			}
 			else
 			{

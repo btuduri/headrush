@@ -27,7 +27,7 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	else if (Type == BALLTYPE_PLAYER)
 	{
 
-		x = (int)Xcoord + (int)g_levelX + 8;
+		x = (int)Xcoord + g_levelX + 8;
 		y = (int)Ycoord + (int)g_levelY + 24;		
 
 		ySettle = int(g_levelY);
@@ -37,7 +37,7 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	if ((y & 7) < MAXYSPEED )
 	{	
 		int d1 = collisionDecrypt( bLevelData[( (y/8)*64 ) + (x/ 8) ] ); // was x-2
-		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 8) / 8)] );
+		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 7) / 8)] );
 	
 		if ((d1 == d2) && (d1 <= PLATFORM && d1 != BLANK)) d3=d1;
 		else if ((d1 != BLANK && d1 <= PLATFORM)) d3=d1;
@@ -127,42 +127,23 @@ int feetRight(float Xcoord,float Ycoord, int Type)
 
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 16;
+		x = (int)Xcoord + 23;
 		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-	//	x = round(Xcoord + g_levelX + 23);
-	//	y = round(Ycoord + g_levelY + 24);
-	//	x = (int)Xcoord + (int)g_levelX + 16;
-	//	y = (int)Ycoord + (int)g_levelY + 24;
-	//	x = round(Xcoord + g_levelX) + 16;
-		
-		
-	//	x = int(Xcoord + g_levelX + 16);
-		x = (int)Xcoord + (int)g_levelX + 16;		
-		y = (int)Ycoord + (int)g_levelY + 24;	
+
+		x = (int)Xcoord + g_levelX + 23;		
+		y = (int)Ycoord + g_levelY + 24;	
 	}
 		
-	int d3;
+		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + (x / 8)] );
 
-//	if (((y + ySettle) & 7) <= MAXYSPEED )
-	{	
-		int d1 = collisionDecrypt( bLevelData[( (y/8)*64 ) + (x/ 8) ] ); // was x-2
-		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 8) / 8)] );
-	
-		if ((d1 == d2) && (d1 <= PLATFORM && (d1 != BLANK))) d3=d1;								// on plat (both)
-		else if ((d1 != BLANK && d1 <= PLATFORM)) d3=d1;
-		else if ((d2 != BLANK && d2 <= PLATFORM)) d3=d2;
-		else d3 = 0;
-
-d3 = d2;
 		char buffer[20];
-		sprintf(buffer, "%d RGHT ",d3) ;	
+		sprintf(buffer, "%d RGHT ",d1) ;	
 		DrawString(buffer, 10, 6, false);
 
-		return d3;		
-	}
+		return d1;		
 //	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 }
 
@@ -173,12 +154,12 @@ int bodyRight(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 24;
+		x = (int)Xcoord + 23;
 		y = (int)Ycoord;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX + 24;
+		x = (int)Xcoord + (int)g_levelX + 23;
 		y = (int)Ycoord + (int)g_levelY;
 	}
 	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
