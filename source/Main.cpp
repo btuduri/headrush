@@ -82,6 +82,9 @@ int main(void)
 	
 	dmaCopy(sprite_colTiles, g_colSprite1.Gfx, 8 * 8 * 2);
 	dmaCopy(sprite_colTiles + 16, g_colSprite2.Gfx, 8 * 8 * 2);
+g_colSprite1.X = 128;
+g_colSprite1.Y = 128;
+
 	
 	// --------------------------
 
