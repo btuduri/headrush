@@ -8,6 +8,7 @@
 #include "ColMap.h"
 #include "Control.h"
 #include "Detect.h"
+#include "Text.h"
 
 //
 // Check the char block at the centre of our ball
@@ -25,23 +26,33 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = round(Xcoord + g_levelX + 8);
-		y = round(Ycoord + g_levelY + 24);
+		x = round(Xcoord + g_levelX) + 8;
+	//	y = round(Ycoord + g_levelY + 24);
 		
+	//	x = (int)Xcoord + (int)g_levelX + 8;
+		y = (int)Ycoord + (int)g_levelY + 24;		
+	
+x = (Xcoord + g_levelX) + 8;
+	
 		ySettle = round(g_levelY);
 	}
 
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
-	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
+//	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
 	{	
-		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 0) / 8)] ); // was x-2
-		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 8) / 8)] );
+		int d1 = collisionDecrypt( bLevelData[( (y/8)*64 ) + (x/ 8) ] ); // was x-2
+//		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 8) / 8)] );
 	
-		if ((d1 == d2) && (d1 <= PLATFORM)) return d1;
-		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
-		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) return d2;	
+//		if ((d1 == d2) && (d1 <= PLATFORM)) return d1;
+//		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
+//		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) return d2;	
 
-//	return d1;
+
+	char buffer[20];
+	sprintf(buffer, "%d CNTR ",d1) ;	
+	DrawString(buffer, 10, 5, false);
+
+	return d1;
 //	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 	}
 	return 0;
@@ -60,7 +71,7 @@ int headCentre(float Xcoord,float Ycoord, int Type)
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX + 10;
+		x = (int)Xcoord + (int)g_levelX + 8;
 		y = (int)Ycoord + (int)g_levelY;
 		ySettle = (int)g_levelY;
 	}
@@ -69,15 +80,16 @@ int headCentre(float Xcoord,float Ycoord, int Type)
 //	if ( (((int)Ycoord + ySettle) & 7) >= MAXYSPEED )
 //	{
 		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + (x / 8)] );
-		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 4) / 8)] );
+//		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 4) / 8)] );
 	
-		if ((d1 == d2) && (d1 == SOLID)) return d1;
+//		if ((d1 == d2) && (d1 == SOLID)) return d1;
 //		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
 //		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) return d2;	
 
 //	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 //	}
-	return 0;
+//	return 0;
+	return d1;
 
 }
 int feetLeft(float Xcoord,float Ycoord, int Type)
@@ -119,15 +131,25 @@ int feetRight(float Xcoord,float Ycoord, int Type)
 
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 23;
-		y = (int)Ycoord + 23;
+		x = (int)Xcoord + 16;
+		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = round(Xcoord + g_levelX + 23);
-		y = round(Ycoord + g_levelY + 24);
-		x = (int)Xcoord + (int)g_levelX + 24;
-		y = (int)Ycoord + (int)g_levelY + 24;
+	//	x = round(Xcoord + g_levelX + 23);
+	//	y = round(Ycoord + g_levelY + 24);
+	//	x = (int)Xcoord + (int)g_levelX + 16;
+	//	y = (int)Ycoord + (int)g_levelY + 24;
+	//	x = round(Xcoord + g_levelX) + 16;
+		
+		
+		x = int(Xcoord + g_levelX + 16);
+		y = (int)Ycoord + (int)g_levelY + 24;	
+		
+		
+	char buffer[20];
+	sprintf(buffer, "%d RGHT ",collisionDecrypt(bLevelData[((y/8)*64) + (x/8)])) ;	
+	DrawString(buffer, 18, 5, false);		
 	}
 	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 }
@@ -147,7 +169,6 @@ int bodyRight(float Xcoord,float Ycoord, int Type)
 		x = (int)Xcoord + (int)g_levelX + 24;
 		y = (int)Ycoord + (int)g_levelY;
 	}
-
 	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 
 }
