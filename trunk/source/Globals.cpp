@@ -8,8 +8,8 @@ Sprite g_spriteArray[];
 //
 // X,Y coord of game map
 //
-int g_levelX = 0;
-int g_levelY = 0;
+float g_levelX = 0;
+float g_levelY = 0;
 
 //
 // jump mechanics
