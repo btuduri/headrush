@@ -207,7 +207,7 @@ void updateSprite(Sprite* pSprite)
 	
 	if (pSprite->Status != BALLSTATUS_JUMPING)	// we already know that we are not jumping!
 	{
-		if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) &&  ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM))) //  &&  ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM)))			// not on the floor
+		if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) &&  ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM))  &&  ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM)))			// not on the floor
 		{	// We are falling (ie. not on the floor)
 		
 			if (pSprite->YSpeed < MAXYSPEED) pSprite->YSpeed += GRAVITY;
@@ -222,22 +222,7 @@ void updateSprite(Sprite* pSprite)
 			
 				pSprite->YSpeed = 0;
 				pSprite->Status = BALLSTATUS_NORMAL;
-			}			
-		
-/*			else
-			{
-				if ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
-				{
-					if (spritePreBounce > pSprite->X)	
-						pSprite->Action = ACTION_MOVELEFT;
-					else
-						pSprite->XSpeed = pSprite->XSpeed + (0.025 + (pSprite->YSpeed /16));
-					pSprite->YSpeed = pSprite->YSpeed - (GRAVITY);	
-					pSprite->Status = BALLSTATUS_NORMAL;
-					pSprite->Y = oldSpriteY;
-				}
-				if ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM))
-*/		
+			}				
 		}
 		else if ( ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetRight(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
 		{	// This checks if we are part on a platforms edge with the RIGHT of the ball, and Ypos to match
@@ -251,24 +236,35 @@ void updateSprite(Sprite* pSprite)
 			
 			pSprite->Y += (7-XPos);
 
-			pSprite->XSpeed -= (0.05 + ( (pSprite->YSpeed) / 6));
+			pSprite->XSpeed -= (GRAVITY / 2 + ( (pSprite->YSpeed) / 4));
 			pSprite->YSpeed = 0;
 			pSprite->Status = BALLSTATUS_NORMAL;			
-
 			
 			char buffer[20];	
 			sprintf(buffer, "%d X SOF",XPos) ;
 			DrawString(buffer, 0, 5, false);				
 		}
-/*		else if ( ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
-		{
-			DrawString("LEFT ", 20, 1, false);
-			int XPos = ((int)pSprite->X + (int)scrollCheckX(pSprite->X)) & 7;
+		else if ( ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
+		{	// This checks if we are part on a platforms edge with the LEFT of the ball, and Ypos to match
 
-			pSprite->Y = ySettle + XPos;
-			pSprite->Status = BALLSTATUS_NORMAL;	
-		}
-*/		else  //if (( ( (int)pSprite->Y + (int)g_levelY +24) & 7) < MAXYSPEED)										// we are on the floor
+			DrawString("LEFT  ", 22, 1, false);
+			
+			int XPos = ((((int)pSprite->X) + scrollCheckX(pSprite->Type) )) & 7;
+			
+			int ySettle = int((pSprite->Y) + (int)scrollCheckY(pSprite->Type));
+			pSprite->Y = ((ySettle >> 3) << 3) - ((int)scrollCheckY(pSprite->Type));
+			
+			pSprite->Y += XPos;
+			
+			pSprite->XSpeed += (GRAVITY / 2 + ( (pSprite->YSpeed) / 4));
+			pSprite->YSpeed = 0;
+			pSprite->Status = BALLSTATUS_NORMAL;			
+			
+			char buffer[20];	
+			sprintf(buffer, "%d X LOF",XPos) ;
+			DrawString(buffer, 0, 6, false);
+		}	
+		else  //if (( ( (int)pSprite->Y + (int)g_levelY +24) & 7) < MAXYSPEED)										// we are on the floor
 		{
 	//		DrawString("      ", 20, 1, false);
 			// This will settle the ball to a platform, taking into count the Y level position if 
@@ -327,7 +323,8 @@ void updateSprite(Sprite* pSprite)
 			if (g_levelX > 0)									// are we able to scroll?
 			{			
 			g_levelX = g_levelX - (oldSpriteX - pSprite->X);	// if so, scroll map and
-			pSprite->X = BALLSCROLLX;							// keep player stationary.
+			pSprite->X = oldSpriteX;							// keep player stationary.
+			if (g_levelX < 0) g_levelX = 0;
 			}
 			else												// otherwise,
 			{
@@ -353,6 +350,7 @@ void updateSprite(Sprite* pSprite)
 			{
 			g_levelY = g_levelY - (oldSpriteY - pSprite->Y);
 			pSprite->Y = BALLSCROLLY; //oldSpriteY;
+			if (g_levelY < 0) g_levelY = 0;	
 			}
 			else
 			{
