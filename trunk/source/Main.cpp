@@ -127,6 +127,10 @@ g_colSprite1.Y = 128;
 	DrawString(buffer, 16, 19, false);
 	sprintf(buffer, "%d Y OFF ",(((int)g_spriteArray[0].Y) + (int) g_levelY) & 7) ;
 	DrawString(buffer, 25, 19, false);
+	
+	
+	sprintf(buffer, "%d X SCRL",(int) g_levelX) ;
+	DrawString(buffer, 0, 4, false);	
 	drawMap();
 	
 		// draw loop

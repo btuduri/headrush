@@ -59,7 +59,6 @@ void moveSprite(Sprite *pSprite)
 		//	else if (g_jumpTrap == FALSE && g_reJump == FALSE)
 		//	{
 				g_reJump = TRUE;
-				DrawString("Double", 0, 6, false);
 			}
 		}
 		else
@@ -204,7 +203,7 @@ void updateSprite(Sprite* pSprite)
 	
 	if (pSprite->Status != BALLSTATUS_JUMPING)	// we already know that we are not jumping!
 	{
-		if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK)) // &&  ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM))) //  &&  ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM)))			// not on the floor
+		if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) &&  ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM))) //  &&  ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM)))			// not on the floor
 		{	// We are falling (ie. not on the floor)
 		
 			if (pSprite->YSpeed < MAXYSPEED) pSprite->YSpeed += GRAVITY;
@@ -243,17 +242,29 @@ void updateSprite(Sprite* pSprite)
 
 			DrawString("RIGHT ", 20, 1, false);
 		
-			int XPos = ((int)(pSprite->X) + (int)scrollCheckX(pSprite->X));
+		//	int XPos = (round(pSprite->X) + (int)scrollCheckX(pSprite->X));
+			int XPos = scrollCheckX(pSprite->X);
+			XPos += (pSprite->X);
 			
-			XPos = XPos & 7;
+			
+	char buffer[20];	
+	sprintf(buffer, "%d X SOF",XPos) ;
+	DrawString(buffer, 0, 5, false);			
 
-		//	int ySettle = ((int)(pSprite->Y) + (int)scrollCheckY(pSprite->Type));
-		//	pSprite->Y = ((ySettle >> 3) << 3) - ((int)scrollCheckY(pSprite->Type));
+			XPos = XPos & 7;
+	
+	sprintf(buffer, "%d X RND",XPos) ;
+	DrawString(buffer, 0, 6, false);
+
+
+
+			int ySettle = ((int)(pSprite->Y) + (int)scrollCheckY(pSprite->Type));
+			pSprite->Y = ((ySettle >> 3) << 3) - ((int)scrollCheckY(pSprite->Type));
 			
-		//	pSprite->Y += (7 - XPos);
+			pSprite->Y += (7 - XPos);
 
 			pSprite->YSpeed = 0;
-		//	pSprite->Status = BALLSTATUS_NORMAL;	
+			pSprite->Status = BALLSTATUS_NORMAL;	
 		}
 /*		else if ( ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > BLANK) && (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) <= PLATFORM)) && (feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK))
 		{
