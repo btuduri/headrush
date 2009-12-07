@@ -21,39 +21,35 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 10;
-		y = (int)Ycoord + 23;
+		x = (int)Xcoord + 8;
+		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = round(Xcoord + g_levelX) + 8;
-	//	y = round(Ycoord + g_levelY + 24);
-		
-	//	x = (int)Xcoord + (int)g_levelX + 8;
-		y = (int)Ycoord + (int)g_levelY + 24;		
-	
-x = (Xcoord + g_levelX) + 8;
-	
-		ySettle = round(g_levelY);
-	}
 
-//	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
-//	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
+		x = (int)Xcoord + (int)g_levelX + 8;
+		y = (int)Ycoord + (int)g_levelY + 24;		
+
+		ySettle = int(g_levelY);
+	}
+	int d3;
+
+	if (((y + ySettle) & 7) <= MAXYSPEED )
 	{	
 		int d1 = collisionDecrypt( bLevelData[( (y/8)*64 ) + (x/ 8) ] ); // was x-2
-//		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 8) / 8)] );
+		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 8) / 8)] );
 	
-//		if ((d1 == d2) && (d1 <= PLATFORM)) return d1;
-//		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
-//		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) return d2;	
+		if ((d1 == d2) && (d1 <= PLATFORM)) d3=d1;
+		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) d3=d1;
+		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) d3=d2;	
 
 
-	char buffer[20];
-	sprintf(buffer, "%d CNTR ",d1) ;	
-	DrawString(buffer, 10, 5, false);
+		char buffer[20];
+		sprintf(buffer, "%d CNTR ",d3) ;	
+		DrawString(buffer, 10, 5, false);
 
-	return d1;
-//	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
+		return d3;
+
 	}
 	return 0;
 
