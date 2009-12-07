@@ -62,63 +62,63 @@ int headCentre(float Xcoord,float Ycoord, int Type)
 	
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord + 10;
+		x = (int)Xcoord + 8;
 		y = (int)Ycoord;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX + 8;
-		y = (int)Ycoord + (int)g_levelY;
-		ySettle = (int)g_levelY;
+
+		x = (int)Xcoord + g_levelX + 8;
+		y = (int)Ycoord + (int)g_levelY;		
+
+		ySettle = int(g_levelY);
 	}
-
-//	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
-//	if ( (((int)Ycoord + ySettle) & 7) >= MAXYSPEED )
-//	{
-		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + (x / 8)] );
-//		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 4) / 8)] );
+	int d3;
 	
-//		if ((d1 == d2) && (d1 == SOLID)) return d1;
-//		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
-//		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) return d2;	
+	if ((y & 7) < MAXYSPEED )
+	{	
+		int d1 = collisionDecrypt( bLevelData[( (y/8)*64 ) + (x/ 8) ] ); // was x-2
+		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 7) / 8)] );
+	
+		if ((d1 == d2) && (d1 <= PLATFORM && d1 != BLANK)) d3=d1;
+		else if ((d1 != BLANK && d1 <= PLATFORM)) d3=d1;
+		else if ((d2 != BLANK && d2 <= PLATFORM)) d3=d2;	
+		else d3 = BLANK;
 
-//	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
-//	}
-//	return 0;
-	return d1;
+		char buffer[20];
+		sprintf(buffer, "%d HDCT ",d3) ;	
+		DrawString(buffer, 10, 8, false);
+
+		return d3;
+
+	}
+	return BLANK;
 
 }
 int feetLeft(float Xcoord,float Ycoord, int Type)
 {
 	int x = 0;
 	int y = 0;
-//	int ySettle = 0;
-	
+
 	if (Type == BALLTYPE_EVILBALL)
 	{
-		x = (int)Xcoord;
+		x = (int)Xcoord + 1;
 		y = (int)Ycoord + 24;
 	}
 	else if (Type == BALLTYPE_PLAYER)
 	{
-		x = (int)Xcoord + (int)g_levelX;
-		y = (int)Ycoord + (int)g_levelY + 24;
-//		ySettle = (int)g_levelY;
-	}
 
-//	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
-//	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
-//	{
-	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
-//	}
-//	else return 0;
-//		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + (x / 8)] );
-//		int d2 = collisionDecrypt( bLevelData[(((y-8)/8)*64) + (x / 8)] );
-	
-//		if ((d1 == d2) && (d1 <= PLATFORM)) return d1;
-//		else if ((d1 != BLANK && d1 <= PLATFORM) && (d2 > PLATFORM || d2 == BLANK)) return d1;
-//		else if ((d2 != BLANK && d2 <= PLATFORM) && (d1 > PLATFORM || d1 == BLANK)) return d2;	
-//		else return 0;
+		x = (int)Xcoord + g_levelX + 1;		
+		y = (int)Ycoord + g_levelY + 24;	
+	}
+		
+		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + (x / 8)] );
+
+		char buffer[20];
+		sprintf(buffer, "%d LEFT ",d1) ;	
+		DrawString(buffer, 10, 8, false);
+
+		return d1;		
 }
 int feetRight(float Xcoord,float Ycoord, int Type)
 {
@@ -141,10 +141,9 @@ int feetRight(float Xcoord,float Ycoord, int Type)
 
 		char buffer[20];
 		sprintf(buffer, "%d RGHT ",d1) ;	
-		DrawString(buffer, 10, 6, false);
+		DrawString(buffer, 10, 7, false);
 
 		return d1;		
-//	return collisionDecrypt( bLevelData[((y/8)*64) + (x/8)] );
 }
 
 int bodyRight(float Xcoord,float Ycoord, int Type)

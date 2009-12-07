@@ -72,7 +72,7 @@ int main(void)
 	dmaCopy(back01Map, bgGetMapPtr(playBG), back01MapLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
-	DrawString("ALPHA 0.00000000002 and a bit", 0, 2, false);
+	DrawString("ALPHA 0.00000000003 and a bit", 0, 2, false);
 	
 	// --------------------------
 	// These are "collision" sprites to help us located rounding issues
@@ -82,8 +82,8 @@ int main(void)
 	
 	dmaCopy(sprite_colTiles, g_colSprite1.Gfx, 8 * 8 * 2);
 	dmaCopy(sprite_colTiles + 16, g_colSprite2.Gfx, 8 * 8 * 2);
-g_colSprite1.X = 128;
-g_colSprite1.Y = 128;
+	//g_colSprite1.X = 128;
+	//g_colSprite1.Y = 128;
 
 	
 	// --------------------------
