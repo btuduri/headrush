@@ -27,13 +27,13 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	{
 		x = round(Xcoord + g_levelX + 10);
 		y = round(Ycoord + g_levelY + 24);
-
+		
 		ySettle = round(g_levelY);
 	}
 
 //	if (((Ycoord/8)*8) - ((y/8)*8) < MAXYSPEED)
 	if ( (((int)Ycoord + ySettle) & 7) <= MAXYSPEED )
-	{
+	{	
 		int d1 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 4) / 8)] ); // was x-2
 		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 6) / 8)] );
 	

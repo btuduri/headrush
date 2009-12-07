@@ -109,3 +109,6 @@ extern int g_levelY;
 
 extern bool g_jumpTrap;
 extern bool g_reJump;
+
+extern Sprite g_colSprite1;
+extern Sprite g_colSprite2;

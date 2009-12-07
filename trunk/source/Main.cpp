@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 #include "sprite_ball.h"		// Include header file for sprites
+#include "sprite_col.h"
 #include "font.h"
 #include "logo.h"
 #include "background01.h"
@@ -72,6 +73,17 @@ int main(void)
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
 	DrawString("ALPHA 0.00000000002 and a bit", 0, 2, false);
+	
+	// --------------------------
+	// These are "collision" sprites to help us located rounding issues
+	
+	g_colSprite1.Gfx = oamAllocateGfx(&oamSub, SpriteSize_8x8, SpriteColorFormat_256Color);
+	g_colSprite2.Gfx = oamAllocateGfx(&oamSub, SpriteSize_8x8, SpriteColorFormat_256Color);
+	
+	dmaCopy(sprite_colTiles, g_colSprite1.Gfx, 8 * 8 * 2);
+	dmaCopy(sprite_colTiles + 16, g_colSprite2.Gfx, 8 * 8 * 2);
+	
+	// --------------------------
 
 	for(int i=1; i<BALLCOUNT; i++)
 	{
@@ -142,7 +154,10 @@ int main(void)
 				oamSet(&oamSub, i + 2, x - BALLOFFSET, y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 			else if (g_spriteArray[i].Type == BALLTYPE_PLAYER)
 				oamSet(&oamSub, i + 2, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
-	}
+		}
+		
+		oamSet(&oamSub, BALLCOUNT + 2, g_colSprite1.X, g_colSprite1.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite1.Gfx, -1, false, false, false, false, false);
+		oamSet(&oamSub, BALLCOUNT + 3, g_colSprite2.X, g_colSprite2.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite2.Gfx, -1, false, false, false, false, false);
 	
 		// Wait for vblank
 		swiWaitForVBlank();

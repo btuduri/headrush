@@ -17,3 +17,6 @@ int g_levelY = 0;
 
 bool g_jumpTrap = 0;
 bool g_reJump = 0;
+
+Sprite g_colSprite1;
+Sprite g_colSprite2;
