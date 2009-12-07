@@ -251,9 +251,10 @@ void updateSprite(Sprite* pSprite)
 			
 			pSprite->Y += (7-XPos);
 
+			pSprite->XSpeed -= (0.05 + ( (pSprite->YSpeed) / 6));
 			pSprite->YSpeed = 0;
 			pSprite->Status = BALLSTATUS_NORMAL;			
-			pSprite->XSpeed -= 0.075;
+
 			
 			char buffer[20];	
 			sprintf(buffer, "%d X SOF",XPos) ;

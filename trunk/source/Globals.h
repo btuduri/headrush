@@ -49,7 +49,7 @@ struct Sprite							// define the elements that construct our 'balls'
 	
 	// Defines for the physic effects
 #define 	ACCEL				0.050F			// Horizontal acceleration on forced movement		( *1.5 when turning)
-#define 	FRICTION			0.035F			// Speed of slowdown when no force applied
+#define 	FRICTION			0.025F			// Speed of slowdown when no force applied
 #define		MAXACCEL			3.5F			// Maximum horizontal speed
 #define		BOUNCE_X_DEADEN		1.055F			// how much to deaden a horzontal bounce
 #define		JUMPSPEED			3.8F			// initial speed of a jump (negetive)				( > higher jump)
