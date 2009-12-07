@@ -150,8 +150,8 @@ int main(void)
 		
 			// set a local x/y so we know if we can display the current sprite
 	
-			int x = g_spriteArray[i].X - g_levelX;
-			int y = g_spriteArray[i].Y - g_levelY;
+			int x = g_spriteArray[i].X - g_levelX - BALLOFFSET;
+			int y = g_spriteArray[i].Y - g_levelY - BALLOFFSET;
 			
 			// The second parameter here is the oam id, so each sprite in the array needs to have it's own id
 			// The + 2 is jump over the player and enemy balls
@@ -160,7 +160,7 @@ int main(void)
 			if ((x > -BALLSIZE && x < SCREEN_WIDTH) && (y > -BALLSIZE && y < SCREEN_HEIGHT) && (g_spriteArray[i].Type == BALLTYPE_EVILBALL))
 				oamSet(&oamSub, i + 2, x, y, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 			else if (g_spriteArray[i].Type == BALLTYPE_PLAYER)
-				oamSet(&oamSub, i + 2, g_spriteArray[i].X, g_spriteArray[i].Y, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
+				oamSet(&oamSub, i + 2, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 		}
 		
 		oamSet(&oamSub, BALLCOUNT + 2, g_colSprite1.X, g_colSprite1.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite1.Gfx, -1, false, false, false, false, false);
