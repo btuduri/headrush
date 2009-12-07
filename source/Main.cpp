@@ -142,7 +142,7 @@ g_colSprite1.Y = 128;
 			
 			fixBoundary(&g_spriteArray[i]);		// Fix boundary
 			
-			oamRotateScale(&oamSub, i + 2, g_spriteArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
+		//	oamRotateScale(&oamSub, i + 2, g_spriteArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
 		
 			// set a local x/y so we know if we can display the current sprite
 	
@@ -153,10 +153,10 @@ g_colSprite1.Y = 128;
 			// The + 2 is jump over the player and enemy balls
 			// The 6th parameter from the end is the rotate/scale index. I think we have 32 of them so
 			// Again each ball gets it's own 
-			if ((x > -(BALLSIZE + BALLOFFSET) && x < (SCREEN_WIDTH + BALLOFFSET)) && (y > -(BALLSIZE + BALLOFFSET) && y < (SCREEN_HEIGHT + BALLOFFSET)) && (g_spriteArray[i].Type == BALLTYPE_EVILBALL))
-				oamSet(&oamSub, i + 2, x - BALLOFFSET, y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
+			if ((x > -BALLSIZE && x < SCREEN_WIDTH) && (y > -BALLSIZE && y < SCREEN_HEIGHT) && (g_spriteArray[i].Type == BALLTYPE_EVILBALL))
+				oamSet(&oamSub, i + 2, x, y, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 			else if (g_spriteArray[i].Type == BALLTYPE_PLAYER)
-				oamSet(&oamSub, i + 2, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
+				oamSet(&oamSub, i + 2, g_spriteArray[i].X, g_spriteArray[i].Y, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 		}
 		
 		oamSet(&oamSub, BALLCOUNT + 2, g_colSprite1.X, g_colSprite1.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite1.Gfx, -1, false, false, false, false, false);
