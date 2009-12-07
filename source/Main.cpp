@@ -72,7 +72,8 @@ int main(void)
 	dmaCopy(back01Map, bgGetMapPtr(playBG), back01MapLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
-	DrawString("ALPHA 0.00000000003 and a bit", 0, 2, false);
+	DrawString("Stupid fucking game idea!", 0, 22, false);
+	DrawString("ALPHA 0.00000000004 and a chuff", 0, 2, false);
 	
 	// --------------------------
 	// These are "collision" sprites to help us located rounding issues
@@ -146,7 +147,7 @@ int main(void)
 			
 			fixBoundary(&g_spriteArray[i]);		// Fix boundary
 			
-		//	oamRotateScale(&oamSub, i + 2, g_spriteArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
+			oamRotateScale(&oamSub, i + 2, g_spriteArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
 		
 			// set a local x/y so we know if we can display the current sprite
 	

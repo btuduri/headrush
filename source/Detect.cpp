@@ -28,13 +28,13 @@ int feetCentre(float Xcoord,float Ycoord, int Type)
 	{
 
 		x = (int)Xcoord + g_levelX + 8;
-		y = (int)Ycoord + (int)g_levelY + 24;		
+		y = (int)Ycoord + g_levelY + 24;		
 
-		ySettle = int(g_levelY);
+		ySettle = (int(g_levelY + Ycoord) & 7);
 	}
 	int d3;
 	
-	if ((y & 7) < MAXYSPEED )
+	if (ySettle < MAXYSPEED )
 	{	
 		int d1 = collisionDecrypt( bLevelData[( (y/8)*64 ) + (x/ 8) ] ); // was x-2
 		int d2 = collisionDecrypt( bLevelData[((y/8)*64) + ((x + 7) / 8)] );
@@ -108,7 +108,7 @@ int feetLeft(float Xcoord,float Ycoord, int Type)
 	else if (Type == BALLTYPE_PLAYER)
 	{
 
-		x = (int)Xcoord + g_levelX + 1;		
+		x = (int)(Xcoord + g_levelX);		
 		y = (int)Ycoord + g_levelY + 24;	
 	}
 		
