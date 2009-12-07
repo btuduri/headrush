@@ -204,7 +204,7 @@ void updateSprite(Sprite* pSprite)
 	
 	if (pSprite->Status != BALLSTATUS_JUMPING)	// we already know that we are not jumping!
 	{
-		if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK)  &&  ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM))) //  &&  ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM)))			// not on the floor
+		if ((feetCentre(pSprite->X, pSprite->Y, pSprite->Type) == BLANK)) // &&  ((feetRight(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetRight(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM))) //  &&  ((feetLeft(pSprite->X, pSprite->Y, pSprite->Type) == BLANK) || (feetLeft(pSprite->X, pSprite->Y, pSprite->Type) > PLATFORM)))			// not on the floor
 		{	// We are falling (ie. not on the floor)
 		
 			if (pSprite->YSpeed < MAXYSPEED) pSprite->YSpeed += GRAVITY;
