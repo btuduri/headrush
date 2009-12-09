@@ -15,6 +15,7 @@
 #include "background01.h"
 #include "back01.h"
 #include "level02.h"
+#include "level03.h"
 #include "Globals.h"
 #include "Control.h"
 #include "Text.h"
@@ -53,20 +54,20 @@ int main(void)
 
 	// Basic dma tile and palette data
 	dmaCopy(sprite_ballTiles, gfxPlayerBallSub, 32 * 32 * 2);
-	dmaCopy(sprite_ballTiles + 256, gfxEnemyBallSub, 32 * 32 * 2);
+	dmaCopy(sprite_ballTiles + 512, gfxEnemyBallSub, 32 * 32 * 2);
 
 	dmaCopy(sprite_ballPal, SPRITE_PALETTE_SUB, 512);
 	
 	dmaCopy(fontTiles, BG_TILE_RAM(BG0_TILE_BASE), fontTilesLen);
-	dmaCopy(fontTiles, BG_TILE_RAM_SUB(BG0_TILE_BASE_SUB) , fontTilesLen);
+//	dmaCopy(fontTiles, BG_TILE_RAM_SUB(BG0_TILE_BASE_SUB) , fontTilesLen);
 	
 	dmaCopy(logoTiles, BG_TILE_RAM(BG1_TILE_BASE), logoTilesLen);
 	dmaCopy(logoMap, BG_MAP_RAM(BG1_MAP_BASE), logoMapLen);
 	dmaCopy(logoPal, BG_PALETTE, logoPalLen);
 	
-	dmaCopy(level02Tiles, bgGetGfxPtr(playFG), level02TilesLen);
-	dmaCopy(level02Map, bgGetMapPtr(playFG), level02MapLen);
-	dmaCopy(level02Pal, BG_PALETTE_SUB, level02PalLen);
+	dmaCopy(level03Tiles, bgGetGfxPtr(playFG), level03TilesLen);
+	dmaCopy(level03Map, bgGetMapPtr(playFG), level03MapLen);
+	dmaCopy(level03Pal, BG_PALETTE_SUB, level03PalLen);
 	
 	dmaCopy(back01Tiles, bgGetGfxPtr(playBG), back01TilesLen);
 	dmaCopy(back01Map, bgGetMapPtr(playBG), back01MapLen);
@@ -102,7 +103,7 @@ int main(void)
 		// INIT PLAYER 
 		g_spriteArray[0].Action = ACTION_NONE;
 		g_spriteArray[0].X = 112;							// Will need to work out a way to centre the scroll
-		g_spriteArray[0].Y = 184-BALLSIZE;				// based on the players initial x/y coord
+		g_spriteArray[0].Y = 150-BALLSIZE;				// based on the players initial x/y coord
 		g_spriteArray[0].Type = BALLTYPE_PLAYER;
 		g_spriteArray[0].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball
 		// Copy the ball tiles to each ball in the array
@@ -158,7 +159,7 @@ int main(void)
 			// The + 2 is jump over the player and enemy balls
 			// The 6th parameter from the end is the rotate/scale index. I think we have 32 of them so
 			// Again each ball gets it's own 
-			if ((x > -BALLSIZE && x < SCREEN_WIDTH) && (y > -BALLSIZE && y < SCREEN_HEIGHT) && (g_spriteArray[i].Type == BALLTYPE_EVILBALL))
+			if ((x > -BALLSIZE - BALLOFFSET - 4 && x < SCREEN_WIDTH) && (y > -BALLSIZE - BALLOFFSET - 4 && y < SCREEN_HEIGHT) && (g_spriteArray[i].Type == BALLTYPE_EVILBALL))
 				oamSet(&oamSub, i + 2, x, y, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 			else if (g_spriteArray[i].Type == BALLTYPE_PLAYER)
 				oamSet(&oamSub, i + 2, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);

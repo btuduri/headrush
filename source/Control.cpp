@@ -86,14 +86,14 @@ void moveSprite(Sprite *pSprite)
 	{
 	case ACTION_MOVELEFT:													// LEFT
 		if ((pSprite->Status == BALLSTATUS_NORMAL) && (pSprite->XSpeed > 0))		// if we are on the ground,
-			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 2);						// then allow a quicker turn
+			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 4);						// then allow a quicker turn
 		else
 			pSprite->XSpeed = pSprite->XSpeed - (ACCEL * 1.5);						// else, normal turn
 		if (pSprite->XSpeed < -MAXACCEL) pSprite->XSpeed = -MAXACCEL;				// stop the speed from going past maximum
 		break;
 	case ACTION_MOVERIGHT:													// RIGHT
 		if ((pSprite->Status == BALLSTATUS_NORMAL) && (pSprite->XSpeed < 0))		// if we are on the ground,
-			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 2);						// then allow a quicker turn
+			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 4);						// then allow a quicker turn
 		else
 			pSprite->XSpeed = pSprite->XSpeed + (ACCEL * 1.5);								// else, normal turn
 		if (pSprite->XSpeed > MAXACCEL) pSprite->XSpeed = MAXACCEL;				// stop the speed from going past maximum
@@ -236,7 +236,7 @@ void updateSprite(Sprite* pSprite)
 			
 			pSprite->Y += (7-XPos);
 
-			pSprite->XSpeed -= (GRAVITY / 2 + ( (pSprite->YSpeed) / 4));
+			pSprite->XSpeed -= (GRAVITY / 3 + ( (pSprite->YSpeed) / 8));
 			pSprite->YSpeed = 0;
 			pSprite->Status = BALLSTATUS_NORMAL;			
 			
@@ -256,7 +256,7 @@ void updateSprite(Sprite* pSprite)
 			
 			pSprite->Y += XPos;
 			
-			pSprite->XSpeed += (GRAVITY / 2 + ( (pSprite->YSpeed) / 4));
+			pSprite->XSpeed += (GRAVITY / 3 + ( (pSprite->YSpeed) / 8));
 			pSprite->YSpeed = 0;
 			pSprite->Status = BALLSTATUS_NORMAL;			
 			
@@ -277,28 +277,28 @@ void updateSprite(Sprite* pSprite)
 			//
 			// Now we need to check our speed and if we are going right and bottom of right check = SOLID and top 2
 			// !=Solid, a little bounce?
-/*			
-			if ((spritePreBounce > pSprite->X) && (oldXSpeed > 1.25))	// we are moving RIGHT
+			
+			if ((spritePreBounce > pSprite->X)) // && (oldXSpeed > 1.25))	// we are moving RIGHT
 			{
 				if ((bodyRight(spritePreBounce, pSprite->Y, pSprite->Type) != SOLID) && (bodyRight(spritePreBounce, pSprite->Y + 8, pSprite->Type) != SOLID) && (bodyRight(spritePreBounce, pSprite->Y + 16, pSprite->Type) == SOLID))
 				{
 					pSprite->XSpeed = oldXSpeed;
-					pSprite->Y -= 0.25;
-					pSprite->Status = BALLSTATUS_JUMPING;
-					pSprite->YSpeed = - 2;
+					pSprite->Y -= 0.55;
+				//	pSprite->Status = BALLSTATUS_JUMPING;
+				//	pSprite->YSpeed = - 2;
 				}
 			}
-			else if ((spritePreBounce < pSprite->X) && (oldXSpeed < - 1.25))	// we are moving LEFT
+			else if ((spritePreBounce < pSprite->X)) // && (oldXSpeed < - 1.25))	// we are moving LEFT
 			{
 				if ((bodyLeft(spritePreBounce, pSprite->Y, pSprite->Type) != SOLID) && (bodyLeft(spritePreBounce, pSprite->Y + 8, pSprite->Type) != SOLID) && (bodyLeft(spritePreBounce, pSprite->Y + 16, pSprite->Type) == SOLID))
 				{
 					pSprite->XSpeed = oldXSpeed;
-					pSprite->Y -= 0.25;
-				pSprite->Status = BALLSTATUS_JUMPING;
-					pSprite->YSpeed = - 2;
+					pSprite->Y -= 0.55;
+				//	pSprite->Status = BALLSTATUS_JUMPING;
+				//	pSprite->YSpeed = - 2;
 				}
 			}
-*/			
+			
 		}
 	};
 	//
