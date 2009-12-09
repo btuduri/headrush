@@ -2,6 +2,8 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
+#include "Box2D.h"
+
 // Having this struct inside here means it won't make a copy each time you #include it
 
 struct Sprite							// define the elements that construct our 'balls'
@@ -112,3 +114,12 @@ extern bool g_reJump;
 
 extern Sprite g_colSprite1;
 extern Sprite g_colSprite2;
+
+extern b2AABB* g_worldAABB;
+extern b2World* g_world;
+extern b2Vec2* g_gravity;
+extern b2BoxDef* g_groundBoxDef;
+extern b2BodyDef* g_groundBodyDef;
+extern b2BoxDef* g_boxDef;
+extern b2BodyDef* g_bodyDef;
+extern b2Body* g_body;

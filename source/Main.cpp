@@ -8,6 +8,7 @@
 #include <stdlib.h>				// Define's some standard "C" functions
 #include <unistd.h>
 
+#include "Box2D.h"
 #include "sprite_ball.h"		// Include header file for sprites
 #include "sprite_col.h"
 #include "font.h"
@@ -21,8 +22,58 @@
 #include "Text.h"
 #include "DrawMap.h"
 
+void initBox2D()
+{
+	g_worldAABB = new b2AABB();
+	g_worldAABB->minVertex.Set(-100.0f, -100.0f);
+	g_worldAABB->maxVertex.Set(100.0f, 100.0f);
+	
+	g_gravity = new b2Vec2(0.0f, -10.0f);
+	
+	bool doSleep = true;
+	
+	g_world = new b2World(*g_worldAABB, *g_gravity, doSleep);
+	
+	g_groundBoxDef = new b2BoxDef();
+	g_groundBoxDef->extents.Set(50.0f, 10.0f);
+	g_groundBoxDef->density = 0.0f;
+
+	g_groundBodyDef = new b2BodyDef(); 
+	g_groundBodyDef->position.Set(0.0f, -10.0f);
+	g_groundBodyDef->AddShape(g_groundBoxDef);
+
+	g_world->CreateBody(g_groundBodyDef);
+
+	g_boxDef = new b2BoxDef();
+	g_boxDef->extents.Set(1.0f, 1.0f);
+	g_boxDef->density = 1.0f;
+	g_boxDef->friction = 0.3f;
+	
+	g_bodyDef = new b2BodyDef();
+	g_bodyDef->position.Set(0.0f, 4.0f);
+	g_bodyDef->AddShape(g_boxDef);
+	
+	g_body = g_world->CreateBody(g_bodyDef);
+
+	float timeStep = 1.0f / 60.0f;
+	int iterations = 10;
+	static char buf[256];
+
+	for(int i=0; i<60; ++i)
+	{
+		g_world->Step(timeStep, iterations);
+		b2Vec2 position = g_body->GetOriginPosition();
+		float rotation = g_body->GetRotation();
+		
+		sprintf(buf, "%4.2f %4.2f %4.2f", (float) position.x, (float) position.y, rotation);
+		fprintf(stderr, buf);
+	}
+}
+
 int main(void)
 {
+	consoleDebugInit(DebugDevice_NOCASH);
+
 	videoSetMode(MODE_0_2D | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D_LAYOUT | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE | DISPLAY_BG3_ACTIVE);
 	videoSetModeSub(MODE_0_2D | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D_LAYOUT | DISPLAY_BG0_ACTIVE | DISPLAY_BG1_ACTIVE | DISPLAY_BG2_ACTIVE | DISPLAY_BG3_ACTIVE);
 	
@@ -59,7 +110,7 @@ int main(void)
 	dmaCopy(sprite_ballPal, SPRITE_PALETTE_SUB, 512);
 	
 	dmaCopy(fontTiles, BG_TILE_RAM(BG0_TILE_BASE), fontTilesLen);
-//	dmaCopy(fontTiles, BG_TILE_RAM_SUB(BG0_TILE_BASE_SUB) , fontTilesLen);
+//	dmaCopy(fontTiles, BG_TILE_RAg_SUB(BG0_TILE_BASE_SUB) , fontTilesLen);
 	
 	dmaCopy(logoTiles, BG_TILE_RAM(BG1_TILE_BASE), logoTilesLen);
 	dmaCopy(logoMap, BG_MAP_RAM(BG1_MAP_BASE), logoMapLen);
@@ -86,6 +137,8 @@ int main(void)
 	dmaCopy(sprite_colTiles + 16, g_colSprite2.Gfx, 8 * 8 * 2);
 	//g_colSprite1.X = 128;
 	//g_colSprite1.Y = 128;
+	
+	initBox2D();
 
 	
 	// --------------------------
