@@ -46,11 +46,11 @@ void initBox2D()
 
 	g_boxDef = new b2BoxDef();
 	g_boxDef->extents.Set(1.0f, 1.0f);
-	g_boxDef->density = 1.0f;
-	g_boxDef->friction = 0.3f;
+	g_boxDef->density = 0.01f;
+	g_boxDef->friction = 0.1f;
 	
 	g_bodyDef = new b2BodyDef();
-	g_bodyDef->position.Set(0.0f, 4.0f);
+	g_bodyDef->position.Set(0.5f, 4.0f);
 	g_bodyDef->AddShape(g_boxDef);
 	
 	g_body = g_world->CreateBody(g_bodyDef);
@@ -59,7 +59,7 @@ void initBox2D()
 	int iterations = 10;
 	static char buf[256];
 
-	for(int i=0; i<60; ++i)
+	/*for(int i=0; i<60; ++i)
 	{
 		g_world->Step(timeStep, iterations);
 		b2Vec2 position = g_body->GetOriginPosition();
@@ -68,6 +68,7 @@ void initBox2D()
 		sprintf(buf, "%4.2f %4.2f %4.2f", (float) position.x, (float) position.y, rotation);
 		fprintf(stderr, buf);
 	}
+*/
 }
 
 int main(void)
@@ -139,7 +140,9 @@ int main(void)
 	//g_colSprite1.Y = 128;
 	
 	initBox2D();
-
+	static char buf[256];
+	float timeStep = 1.0f / 60.0f;
+	int iterations = 10;
 	
 	// --------------------------
 
@@ -163,13 +166,14 @@ int main(void)
 		dmaCopy(sprite_ballTiles, g_spriteArray[0].Gfx, 32 * 32 * 2);	
 
 	g_levelX = 0;
-	g_levelY = 512-192;
+	g_levelY = 0;
+	drawMap();
 
 
-	char buffer[20];
+//	char buffer[20];
 	while(1)
 	{
-
+/*
 	sprintf(buffer, "%d X ",(int)g_spriteArray[0].X) ;
 	DrawString(buffer, 10, 21, false);
 	sprintf(buffer, "%d Y ",(int)g_spriteArray[0].Y + (int) g_levelY) ;
@@ -186,21 +190,20 @@ int main(void)
 	
 	sprintf(buffer, "%d X SCRL",(int) g_levelX) ;
 	DrawString(buffer, 0, 4, false);	
+*/
 	drawMap();
 	
+
+b2Vec2 posBall = g_body->GetOriginPosition();
+g_spriteArray[0].Y = (posBall.y * 50);
+g_spriteArray[0].X = posBall.x * 256;
+
+oamSet(&oamSub, 2, g_spriteArray[0].X - BALLOFFSET, g_spriteArray[0].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[0].Gfx, 2, false, false, false, false, false);
 		// draw loop
-		for(register int i=0; i<BALLCOUNT; i++)
+/*		for(register int i=0; i<BALLCOUNT; i++)
 		{
 			moveSprite(&g_spriteArray[i]);		// move all active sprites
-			
-			updateSprite(&g_spriteArray[i]);		// call updateSprite with the address of the struct
-
-			// Note this only calculates between each ball in the array
-		//	for(int j=0; j<BALLCOUNT; j++)
-		//		checkCollision(&g_spriteArray[i], &g_spriteArray[j]); // check collision between all balls
-			
-			fixBoundary(&g_spriteArray[i]);		// Fix boundary
-			
+	
 			oamRotateScale(&oamSub, i + 2, g_spriteArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
 		
 			// set a local x/y so we know if we can display the current sprite
@@ -217,6 +220,17 @@ int main(void)
 			else if (g_spriteArray[i].Type == BALLTYPE_PLAYER)
 				oamSet(&oamSub, i + 2, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
 		}
+*/
+
+
+
+		g_world->Step(timeStep, iterations);
+		b2Vec2 position = g_body->GetOriginPosition();
+		float rotation = g_body->GetRotation();
+		
+		sprintf(buf, "%4.2f %4.2f %4.2f", (float) position.x, (float) position.y, rotation);
+		fprintf(stderr, buf);
+
 		
 		oamSet(&oamSub, BALLCOUNT + 2, g_colSprite1.X, g_colSprite1.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite1.Gfx, -1, false, false, false, false, false);
 		oamSet(&oamSub, BALLCOUNT + 3, g_colSprite2.X, g_colSprite2.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite2.Gfx, -1, false, false, false, false, false);
