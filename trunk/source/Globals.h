@@ -17,29 +17,29 @@ struct Sprite							// define the elements that construct our 'balls'
 	int Action;
 };
 
-#define BG0_MAP_BASE				26
-#define BG0_MAP_BASE_SUB			26
+#define BG0_MAP_BASE				0
+#define BG0_MAP_BASE_SUB			0
 
-#define BG1_MAP_BASE				31
-#define BG1_MAP_BASE_SUB			20
+#define BG1_MAP_BASE				2
+#define BG1_MAP_BASE_SUB			3
 
-#define BG2_MAP_BASE				28
-#define BG2_MAP_BASE_SUB			24
+#define BG2_MAP_BASE				0
+#define BG2_MAP_BASE_SUB			0
 
-#define BG3_MAP_BASE				30
-#define BG3_MAP_BASE_SUB			30
+#define BG3_MAP_BASE				7
+#define BG3_MAP_BASE_SUB			7
 
 #define BG0_TILE_BASE				7
 #define BG0_TILE_BASE_SUB			7
 
 #define BG1_TILE_BASE				5
-#define BG1_TILE_BASE_SUB			0
+#define BG1_TILE_BASE_SUB			1
 
-#define BG2_TILE_BASE				3
-#define BG2_TILE_BASE_SUB			4
+#define BG2_TILE_BASE				7
+#define BG2_TILE_BASE_SUB			5
 
-#define BG3_TILE_BASE				0
-#define BG3_TILE_BASE_SUB			2
+#define BG3_TILE_BASE				8
+#define BG3_TILE_BASE_SUB			8
 
 #define SCREEN_WIDTH				256
 #define SCREEN_HEIGHT				192
@@ -48,13 +48,13 @@ struct Sprite							// define the elements that construct our 'balls'
 #define LEVEL_HEIGHT				512
 	
 	// Defines for the physic effects
-#define 	ACCEL				0.050F			// Horizontal acceleration on forced movement		( *1.5 when turning)
+#define 	ACCEL				0.070F			// Horizontal acceleration on forced movement		( *1.5 when turning)
 #define 	FRICTION			0.025F			// Speed of slowdown when no force applied
 #define		MAXACCEL			3.5F			// Maximum horizontal speed
-#define		BOUNCE_X_DEADEN		1.055F			// how much to deaden a horzontal bounce
-#define		JUMPSPEED			3.7F			// initial speed of a jump (negetive)				( > higher jump)
-#define		GRAVITY				0.195F			// force of gravity									(affects jump and bounce)
-#define		BOUNCEFACTOR		0			// used to reverse a vertical drop for a bounce		( < for more bounces)
+#define		BOUNCE_X_DEADEN		1.55F			// how much to deaden a horzontal bounce
+#define		JUMPSPEED			4.99F			// initial speed of a jump (negetive)				( > higher jump)
+#define		GRAVITY				0.18F			// force of gravity									(affects jump and bounce)
+#define		BOUNCEFACTOR		0				// used to reverse a vertical drop for a bounce		( < for more bounces)
 #define		BOUNCEFACTORAMOUNT	1.55F			// the amount of bounce to allow on a vertical drop	( > for smaller bounce)
 #define		MAXYSPEED			4.5F			// maximum speed you can drop
 #define		ROLLSPEEDLIMIT		1F				// speed at which a roll works of a platform
