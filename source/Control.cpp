@@ -304,7 +304,7 @@ void updateSprite(Sprite* pSprite)
 	//
 	// ok, we need to scroll the screen if this is a player ball! (ulp)
 	//
-	if (pSprite->Type == BALLTYPE_PLAYER)
+/*	if (pSprite->Type == BALLTYPE_PLAYER)
 	{
 		if (pSprite->X + BALLSIZE > SCREEN_WIDTH - BALLSCROLLX) 	// have we moved (right) into an area that means scroll
 		{
@@ -359,7 +359,7 @@ void updateSprite(Sprite* pSprite)
 		}		
 	
 	}
-	
+*/	
 	// Now we need to rotate the head, based on our movement!
 	// using rotateHead to pass, initialX, and currentX to return the angle!
 	// wow!! It worked!
