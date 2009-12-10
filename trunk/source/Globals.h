@@ -71,7 +71,7 @@ struct Sprite							// define the elements that construct our 'balls'
 #define		BALLSCROLLY			80				// closeness to top/bot to enable scrolling
 #define		BALLSIZE			24				// Size of balls
 #define		BALLOFFSET			4				// Ball offset of balls
-#define		BALLCOUNT			20				// Number of balls
+#define		BALLCOUNT			16				// Number of balls
 
 	// Defines for player (ball) status
 	
@@ -130,4 +130,4 @@ extern b2BoxDef* g_boxDef;
 extern b2BodyDef* g_bodyDef;
 extern b2Body* g_body;
 
-//extern b2PolygonDef* g_plat;
+extern b2PolyDef* g_plat;
