@@ -25,7 +25,7 @@
 void initBox2D()
 {
 	g_worldAABB = new b2AABB();
-	g_worldAABB->minVertex.Set(SCREEN_WIDTH * -SCALE, SCREEN_HEIGHT * -SCALE);
+	g_worldAABB->minVertex.Set(- BALLSIZE * SCALE, - BALLSIZE * SCALE);
 	g_worldAABB->maxVertex.Set(SCREEN_WIDTH * SCALE, SCREEN_HEIGHT * SCALE);
 	
 	g_gravity = new b2Vec2(0.0f, -10.0f);
@@ -39,26 +39,45 @@ void initBox2D()
 	g_groundBoxDef->density = 0.0f;
 
 	g_groundBodyDef = new b2BodyDef(); 
-	g_groundBodyDef->position.Set(0.0f, -10.0f);
+	g_groundBodyDef->position.Set(0.0f, -20.0f);
 	g_groundBodyDef->AddShape(g_groundBoxDef);
 
 	g_world->CreateBody(g_groundBodyDef);
+//
+	g_boxDef = new b2BoxDef();
+	g_boxDef->extents.Set(4.7f, 1.0f);
+	g_boxDef->density = 0.0f;
+	g_boxDef->friction = 1.0f;
+	g_boxDef->restitution = 0.0F;
 
-	/* g_boxDef = new b2BoxDef();
-	g_boxDef->extents.Set(1.0f, 1.0f);
-	g_boxDef->density = 1.0f;
-	g_boxDef->friction = 0.3f;
+//g_plat = new b2PolygonDef();	// HOW THE FUCK?
+/*g_plat->vertexCount = 6;
+g_plat->vertices[0].Set(-1.0f, -0.3f);
+g_plat->vertices[1].Set(3.7f, 0.0f);
+g_plat->vertices[2].Set(0.0f, 1.0f);
+g_plat->vertices[3].Set(-2.7f, 0.0f);
+g_plat->vertices[4].Set(-2.0f, -0.3f);
+g_plat->vertices[5].Set(0.0f, -0.4f);
+*/
 	
 	g_bodyDef = new b2BodyDef();
-	g_bodyDef->position.Set(0.0f, 4.0f);
+	g_bodyDef->position.Set(10.6f, 2.4f);
 	g_bodyDef->AddShape(g_boxDef);
-	
-	g_body = g_world->CreateBody(g_bodyDef);
+	g_world->CreateBody(g_bodyDef);
 
-	float timeStep = 1.0f / 60.0f;
-	int iterations = 10;
-	static char buf[256];
-	} */
+	g_bodyDef = new b2BodyDef();
+	g_bodyDef->position.Set(25.6f, 2.8f);
+	g_bodyDef->AddShape(g_boxDef);
+	g_world->CreateBody(g_bodyDef);
+
+	g_bodyDef = new b2BodyDef();
+	g_bodyDef->position.Set(15.0f, 0.6f);
+	g_bodyDef->AddShape(g_boxDef);
+	g_world->CreateBody(g_bodyDef);
+//	float timeStep = 1.0f / 60.0f;
+//	int iterations = 10;
+//	static char buf[256];
+	
 }
 
 int main(void)
@@ -137,7 +156,7 @@ int main(void)
 	{
 		g_spriteArray[i].Action = ACTION_NONE;	
 		g_spriteArray[i].X = (rand() % 256 - (BALLSIZE * 2)) + BALLSIZE; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
-		g_spriteArray[i].Y = rand() % 192; //(rand() % (LEVEL_HEIGHT-(BALLSIZE * 2))) + BALLSIZE;
+		g_spriteArray[i].Y =  192-rand() % 60; //(rand() % (LEVEL_HEIGHT-(BALLSIZE * 2))) + BALLSIZE;
 		g_spriteArray[i].Type = BALLTYPE_EVILBALL;
 		g_spriteArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
 		dmaCopy(sprite_ballTiles + 256, g_spriteArray[i].Gfx, 32 * 32 * 2);		// Copy the ball tiles to each ball in the array
@@ -148,7 +167,7 @@ int main(void)
 		g_spriteArray[i].CircleDef->radius = 24 / 2 * SCALE; 
 		g_spriteArray[i].CircleDef->density = 0.1F; 
 		g_spriteArray[i].CircleDef->friction = 0.2F; 
-		g_spriteArray[i].CircleDef->restitution = 0.8F; 
+		g_spriteArray[i].CircleDef->restitution = 0.5F; 
 
 		g_spriteArray[i].BodyDef->position.Set(g_spriteArray[i].X * SCALE, g_spriteArray[i].Y * SCALE);
 		g_spriteArray[i].BodyDef->AddShape(g_spriteArray[i].CircleDef);
@@ -190,6 +209,7 @@ int main(void)
 	while(1)
 	{
 		b2Vec2 position = g_spriteArray[0].Body->GetOriginPosition();
+		float rotationP = g_spriteArray[0].Body->GetRotation();
 	
 		sprintf(buffer, "%d X ",(int)(position.x * 10)) ;
 		DrawString(buffer, 10, 21, false);
@@ -198,7 +218,11 @@ int main(void)
 		sprintf(buffer, "%d X SCRL",(int) g_levelX) ;
 		DrawString(buffer, 0, 4, false);
 		sprintf(buffer, "%d Y SCRL",(int) g_levelY) ;
-		DrawString(buffer, 0, 5, false);
+		DrawString(buffer, 0, 5, false);	
+		sprintf(buffer, "%d Rot",(int)(rotationP *100)) ;
+		DrawString(buffer, 16, 20, false);		
+		
+
 		drawMap();
 	
 		g_world->Step(timeStep, iterations);
@@ -208,11 +232,11 @@ int main(void)
 			b2Vec2 position = g_spriteArray[i].Body->GetOriginPosition();
 			float rotation = g_spriteArray[i].Body->GetRotation();
 			
-			oamRotateScale(&oamSub, i, degreesToAngle(rotation * 90), intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
+			oamRotateScale(&oamSub, i, degreesToAngle(rotation * 100), intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
 			
-			g_spriteArray[i].X = ((float)position.x / SCALE);			
+			g_spriteArray[i].X = (position.x / SCALE);			
 			g_spriteArray[i].Y = 192 - BALLSIZE - ((float)position.y / SCALE);
-
+			
 			oamSet(&oamSub, i, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i, false, false, false, false, false);
 		}
 		
