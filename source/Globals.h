@@ -9,6 +9,10 @@
 struct Sprite							// define the elements that construct our 'balls'
 {
 	u16* Gfx;
+	b2CircleDef* CircleDef;
+	b2BodyDef* BodyDef;
+	b2Body* Body;
+	
 	float X;
 	float Y;
 	float XSpeed;
@@ -100,6 +104,8 @@ struct Sprite							// define the elements that construct our 'balls'
 #define		FALLER				4
 
 #define		DEADLY				64
+
+#define		SCALE				0.1F
 
 #endif
 
