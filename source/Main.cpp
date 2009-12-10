@@ -58,15 +58,6 @@ void initBox2D()
 	float timeStep = 1.0f / 60.0f;
 	int iterations = 10;
 	static char buf[256];
-
-	for(int i=0; i<60; ++i)
-	{
-		g_world->Step(timeStep, iterations);
-		b2Vec2 position = g_body->GetOriginPosition();
-		float rotation = g_body->GetRotation();
-		
-		sprintf(buf, "%4.2f %4.2f %4.2f", (float) position.x, (float) position.y, rotation);
-		fprintf(stderr, buf);
 	} */
 }
 
@@ -142,7 +133,7 @@ int main(void)
 	
 	// --------------------------
 
-	for(int i=0; i<BALLCOUNT; i++)
+	for(int i=1; i<BALLCOUNT; i++)
 	{
 		g_spriteArray[i].Action = ACTION_NONE;	
 		g_spriteArray[i].X = (rand() % 256 - (BALLSIZE * 2)) + BALLSIZE; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
@@ -166,10 +157,26 @@ int main(void)
 	}
 	
 	// INIT PLAYER
-	g_spriteArray[0].X = 200;							// Will need to work out a way to centre the scroll
-	g_spriteArray[0].Y = 150-BALLSIZE;				// based on the players initial x/y coord
-	g_spriteArray[0].Type = BALLTYPE_PLAYER;
-g_spriteArray[0].BodyDef->position.Set(g_spriteArray[0].X * SCALE, g_spriteArray[0].Y * SCALE);
+		g_spriteArray[0].Action = ACTION_NONE;	
+		g_spriteArray[0].X = 128;
+		g_spriteArray[0].Y = 120;
+		g_spriteArray[0].Type = BALLTYPE_PLAYER;
+		g_spriteArray[0].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
+		dmaCopy(sprite_ballTiles, g_spriteArray[0].Gfx, 32 * 32 * 2);		// Copy the ball tiles to each ball in the array
+		
+		g_spriteArray[0].CircleDef = new b2CircleDef();
+		g_spriteArray[0].BodyDef =  new b2BodyDef();
+		
+		g_spriteArray[0].CircleDef->radius = 24 / 2 * SCALE; 
+		g_spriteArray[0].CircleDef->density = 0.5F; 
+		g_spriteArray[0].CircleDef->friction = 0.2F; 
+		g_spriteArray[0].CircleDef->restitution = 0.8F; 
+
+		g_spriteArray[0].BodyDef->position.Set(g_spriteArray[0].X * SCALE, g_spriteArray[0].Y * SCALE);
+		g_spriteArray[0].BodyDef->AddShape(g_spriteArray[0].CircleDef);
+		
+		g_spriteArray[0].Body = g_world->CreateBody(g_spriteArray[0].BodyDef);
+
 	g_levelX = 0;
 	g_levelY = 0;
 	drawMap();
@@ -182,23 +189,16 @@ g_spriteArray[0].BodyDef->position.Set(g_spriteArray[0].X * SCALE, g_spriteArray
 	
 	while(1)
 	{
-		/* sprintf(buffer, "%d X ",(int)g_spriteArray[0].X) ;
+		b2Vec2 position = g_spriteArray[0].Body->GetOriginPosition();
+	
+		sprintf(buffer, "%d X ",(int)(position.x * 10)) ;
 		DrawString(buffer, 10, 21, false);
-		sprintf(buffer, "%d Y ",(int)g_spriteArray[0].Y + (int) g_levelY) ;
-		DrawString(buffer, 16, 21, false);	
-		sprintf(buffer, "%d A ",(int)g_spriteArray[0].Action) ;
-		DrawString(buffer, 10, 23, false);	
-		sprintf(buffer, "%d S ",(int)g_spriteArray[0].Status) ;
-		DrawString(buffer, 16, 23, false);
-		sprintf(buffer, "%d X OFF ",(((int)g_spriteArray[0].X) + (int) g_levelX) & 7) ;
-		DrawString(buffer, 16, 19, false);
-		sprintf(buffer, "%d Y OFF ",(((int)g_spriteArray[0].Y) + (int) g_levelY) & 7) ;
-		DrawString(buffer, 25, 19, false);
-		
-		
+		sprintf(buffer, "%d Y ",192 - (int)(position.y * 10)) ;
+		DrawString(buffer, 16, 21, false);			
 		sprintf(buffer, "%d X SCRL",(int) g_levelX) ;
-		DrawString(buffer, 0, 4, false); */
-
+		DrawString(buffer, 0, 4, false);
+		sprintf(buffer, "%d Y SCRL",(int) g_levelY) ;
+		DrawString(buffer, 0, 5, false);
 		drawMap();
 	
 		g_world->Step(timeStep, iterations);
@@ -216,36 +216,6 @@ g_spriteArray[0].BodyDef->position.Set(g_spriteArray[0].X * SCALE, g_spriteArray
 			oamSet(&oamSub, i, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i, false, false, false, false, false);
 		}
 		
-		// draw loop
-/*		for(register int i=0; i<BALLCOUNT; i++)
-		{
-			moveSprite(&g_spriteArray[i]);		// move all active sprites
-	
-			oamRotateScale(&oamSub, i + 2, g_spriteArray[i].Angle, intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
-		
-			// set a local x/y so we know if we can display the current sprite
-	
-			int x = g_spriteArray[i].X - g_levelX - BALLOFFSET;
-			int y = g_spriteArray[i].Y - g_levelY - BALLOFFSET;
-			
-			// The second parameter here is the oam id, so each sprite in the array needs to have it's own id
-			// The + 2 is jump over the player and enemy balls
-			// The 6th parameter from the end is the rotate/scale index. I think we have 32 of them so
-			// Again each ball gets it's own 
-			if ((x > -BALLSIZE - BALLOFFSET - 4 && x < SCREEN_WIDTH) && (y > -BALLSIZE - BALLOFFSET - 4 && y < SCREEN_HEIGHT) && (g_spriteArray[i].Type == BALLTYPE_EVILBALL))
-				oamSet(&oamSub, i + 2, x, y, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
-			else if (g_spriteArray[i].Type == BALLTYPE_PLAYER)
-				oamSet(&oamSub, i + 2, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i + 2, false, false, false, false, false);
-		}
-*/
-		
-		//sprintf(buf, "%4.2f %4.2f %4.2f", (float) position.x, (float) position.y, rotation);
-		//fprintf(stderr, buf);
-
-		
-		//oamSet(&oamSub, BALLCOUNT + 2, g_colSprite1.X, g_colSprite1.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite1.Gfx, -1, false, false, false, false, false);
-		//oamSet(&oamSub, BALLCOUNT + 3, g_colSprite2.X, g_colSprite2.Y, 0, 0, SpriteSize_8x8, SpriteColorFormat_256Color, g_colSprite2.Gfx, -1, false, false, false, false, false);
-	
 		// Wait for vblank
 		swiWaitForVBlank();
 		
