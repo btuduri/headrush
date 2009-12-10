@@ -44,39 +44,61 @@ void initBox2D()
 
 	g_world->CreateBody(g_groundBodyDef);
 //
+	g_plat = new b2PolyDef();	// HOW THE FUCK?
+	g_plat->vertexCount = 6;
+	g_plat->vertices[0].Set(0.0f, 0.4f);
+	g_plat->vertices[1].Set(-3.0f, 0.05f);
+	g_plat->vertices[2].Set(-3.0f, -0.4f);
+	g_plat->vertices[3].Set(0.0f, -0.5f);
+	g_plat->vertices[4].Set(5.8f, -0.5f);
+	g_plat->vertices[5].Set(5.7f, 0.7f);
+	g_plat->density = 0.0f;
+	g_plat->friction = 2.0f;
+	g_bodyDef = new b2BodyDef();
+	g_bodyDef->position.Set(9.5f, 3.4f);
+	g_bodyDef->AddShape(g_plat);
+	g_world->CreateBody(g_bodyDef);
+
+
+	g_plat = new b2PolyDef();	// HOW THE FUCK?
+	g_plat->vertexCount = 4;
+	g_plat->vertices[0].Set(0.0f, 0.5f);
+	g_plat->vertices[1].Set(0.0f, -0.5f);
+	g_plat->vertices[2].Set(6.0f, -1.0f);
+	g_plat->vertices[3].Set(6.0f, 1.5f);
+	g_plat->density = 0.0f;
+	g_plat->friction = 2.0f;
+	g_bodyDef = new b2BodyDef();
+	g_bodyDef->position.Set(20.8f, 3.6f);
+	g_bodyDef->AddShape(g_plat);
+	g_world->CreateBody(g_bodyDef);
+
+
 	g_boxDef = new b2BoxDef();
 	g_boxDef->extents.Set(4.7f, 1.0f);
 	g_boxDef->density = 0.0f;
 	g_boxDef->friction = 1.0f;
 	g_boxDef->restitution = 0.0F;
-
-//g_plat = new b2PolygonDef();	// HOW THE FUCK?
-/*g_plat->vertexCount = 6;
-g_plat->vertices[0].Set(-1.0f, -0.3f);
-g_plat->vertices[1].Set(3.7f, 0.0f);
-g_plat->vertices[2].Set(0.0f, 1.0f);
-g_plat->vertices[3].Set(-2.7f, 0.0f);
-g_plat->vertices[4].Set(-2.0f, -0.3f);
-g_plat->vertices[5].Set(0.0f, -0.4f);
-*/
+	g_bodyDef = new b2BodyDef();
+	g_bodyDef->position.Set(17.5f, 0.6f);
+	g_bodyDef->AddShape(g_boxDef);
+	g_world->CreateBody(g_bodyDef);
 	
+	
+	g_boxDef = new b2BoxDef();
+	g_boxDef->extents.Set(1.0f, 20.0f);
+	g_boxDef->density = 0.0f;
+	g_boxDef->friction = 1.0f;
+	g_boxDef->restitution = 0.0F;
 	g_bodyDef = new b2BodyDef();
-	g_bodyDef->position.Set(10.6f, 2.4f);
+	g_bodyDef->position.Set(25.6f, 19.2f);
 	g_bodyDef->AddShape(g_boxDef);
-	g_world->CreateBody(g_bodyDef);
-
+	g_world->CreateBody(g_bodyDef);	
 	g_bodyDef = new b2BodyDef();
-	g_bodyDef->position.Set(25.6f, 2.8f);
+	g_bodyDef->position.Set(-2.0f, 19.2f);
 	g_bodyDef->AddShape(g_boxDef);
-	g_world->CreateBody(g_bodyDef);
-
-	g_bodyDef = new b2BodyDef();
-	g_bodyDef->position.Set(15.0f, 0.6f);
-	g_bodyDef->AddShape(g_boxDef);
-	g_world->CreateBody(g_bodyDef);
-//	float timeStep = 1.0f / 60.0f;
-//	int iterations = 10;
-//	static char buf[256];
+	g_world->CreateBody(g_bodyDef);	
+	
 	
 }
 
@@ -134,7 +156,7 @@ int main(void)
 	dmaCopy(back01Map, bgGetMapPtr(playBG), back01MapLen);
 	
 	DrawString("HEADRUSH, whatever next?", 0, 0, false);
-	DrawString("Stupid fucking game idea!", 0, 22, false);
+	DrawString("WELL!! Looking a bit better?", 0, 22, false);
 	DrawString("ALPHA 0.00000000004 and a chuff", 0, 2, false);
 	
 	// --------------------------
@@ -155,19 +177,19 @@ int main(void)
 	for(int i=1; i<BALLCOUNT; i++)
 	{
 		g_spriteArray[i].Action = ACTION_NONE;	
-		g_spriteArray[i].X = (rand() % 256 - (BALLSIZE * 2)) + BALLSIZE; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
-		g_spriteArray[i].Y =  192-rand() % 60; //(rand() % (LEVEL_HEIGHT-(BALLSIZE * 2))) + BALLSIZE;
+		g_spriteArray[i].X = (rand() % 100) + 140; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
+		g_spriteArray[i].Y =  192 - ((rand() % 100)); //(rand() % (LEVEL_HEIGHT-(BALLSIZE * 2))) + BALLSIZE;
 		g_spriteArray[i].Type = BALLTYPE_EVILBALL;
 		g_spriteArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
-		dmaCopy(sprite_ballTiles + 256, g_spriteArray[i].Gfx, 32 * 32 * 2);		// Copy the ball tiles to each ball in the array
+		dmaCopy(sprite_ballTiles + 512, g_spriteArray[i].Gfx, 32 * 32 * 2);		// Copy the ball tiles to each ball in the array
 		
 		g_spriteArray[i].CircleDef = new b2CircleDef();
 		g_spriteArray[i].BodyDef =  new b2BodyDef();
 		
 		g_spriteArray[i].CircleDef->radius = 24 / 2 * SCALE; 
-		g_spriteArray[i].CircleDef->density = 0.1F; 
-		g_spriteArray[i].CircleDef->friction = 0.2F; 
-		g_spriteArray[i].CircleDef->restitution = 0.5F; 
+		g_spriteArray[i].CircleDef->density = 1.0F; 
+		g_spriteArray[i].CircleDef->friction = 0.5F; 
+		g_spriteArray[i].CircleDef->restitution = 0.8F; 
 
 		g_spriteArray[i].BodyDef->position.Set(g_spriteArray[i].X * SCALE, g_spriteArray[i].Y * SCALE);
 		g_spriteArray[i].BodyDef->AddShape(g_spriteArray[i].CircleDef);
@@ -202,7 +224,7 @@ int main(void)
 	
 	static char buf[256];
 	float timeStep = 1.0f / 60.0f;
-	int iterations = 1;
+	int iterations = 2;
 	char buffer[20];
 	int num = 0;
 	
