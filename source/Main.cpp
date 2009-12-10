@@ -145,7 +145,7 @@ int main(void)
 	for(int i=0; i<BALLCOUNT; i++)
 	{
 		g_spriteArray[i].Action = ACTION_NONE;	
-		g_spriteArray[i].X = rand() % 256; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
+		g_spriteArray[i].X = (rand() % 256 - (BALLSIZE * 2)) + BALLSIZE; //(rand() % (LEVEL_WIDTH-(BALLSIZE * 2))) + BALLSIZE * 2;
 		g_spriteArray[i].Y = rand() % 192; //(rand() % (LEVEL_HEIGHT-(BALLSIZE * 2))) + BALLSIZE;
 		g_spriteArray[i].Type = BALLTYPE_EVILBALL;
 		g_spriteArray[i].Gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color); // allocate for each ball	
@@ -155,9 +155,9 @@ int main(void)
 		g_spriteArray[i].BodyDef =  new b2BodyDef();
 		
 		g_spriteArray[i].CircleDef->radius = 24 / 2 * SCALE; 
-		g_spriteArray[i].CircleDef->density = 1.0F; 
-		g_spriteArray[i].CircleDef->friction = 0.5F; 
-		g_spriteArray[i].CircleDef->restitution = 0.1F; 
+		g_spriteArray[i].CircleDef->density = 0.1F; 
+		g_spriteArray[i].CircleDef->friction = 0.2F; 
+		g_spriteArray[i].CircleDef->restitution = 0.8F; 
 
 		g_spriteArray[i].BodyDef->position.Set(g_spriteArray[i].X * SCALE, g_spriteArray[i].Y * SCALE);
 		g_spriteArray[i].BodyDef->AddShape(g_spriteArray[i].CircleDef);
@@ -166,17 +166,17 @@ int main(void)
 	}
 	
 	// INIT PLAYER
-	g_spriteArray[0].X = 112;							// Will need to work out a way to centre the scroll
+	g_spriteArray[0].X = 200;							// Will need to work out a way to centre the scroll
 	g_spriteArray[0].Y = 150-BALLSIZE;				// based on the players initial x/y coord
 	g_spriteArray[0].Type = BALLTYPE_PLAYER;
-
+g_spriteArray[0].BodyDef->position.Set(g_spriteArray[0].X * SCALE, g_spriteArray[0].Y * SCALE);
 	g_levelX = 0;
 	g_levelY = 0;
 	drawMap();
 	
 	static char buf[256];
-	float timeStep = 1.0f / 30.0f;
-	int iterations = 10;
+	float timeStep = 1.0f / 60.0f;
+	int iterations = 1;
 	char buffer[20];
 	int num = 0;
 	
@@ -208,7 +208,7 @@ int main(void)
 			b2Vec2 position = g_spriteArray[i].Body->GetOriginPosition();
 			float rotation = g_spriteArray[i].Body->GetRotation();
 			
-			oamRotateScale(&oamSub, i, degreesToAngle(rotation * 360), intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
+			oamRotateScale(&oamSub, i, degreesToAngle(rotation * 90), intToFixed(1, 8), intToFixed(1, 8));	// rotate the sprite
 			
 			g_spriteArray[i].X = ((float)position.x / SCALE);			
 			g_spriteArray[i].Y = 192 - BALLSIZE - ((float)position.y / SCALE);
