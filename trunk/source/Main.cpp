@@ -221,12 +221,10 @@ int main(void)
 	g_levelX = 0;
 	g_levelY = 0;
 	drawMap();
-	
-	static char buf[256];
+
 	float timeStep = 1.0f / 60.0f;
 	int iterations = 2;
 	char buffer[20];
-	int num = 0;
 	
 	while(1)
 	{
@@ -260,8 +258,20 @@ int main(void)
 			g_spriteArray[i].Y = 192 - BALLSIZE - ((float)position.y / SCALE);
 			
 			oamSet(&oamSub, i, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i, false, false, false, false, false);
-		}
+		};
 		
+		if (keysHeld() & KEY_L)
+		{	
+			for(int i=1; i<BALLCOUNT; i++)
+			{
+			b2Vec2 position = g_spriteArray[i].Body->GetOriginPosition();
+			position.x = (rand() % 100) + 140;
+			position.y =  192 - ((rand() % 100));		// should this not work?
+			}
+	
+		}
+
+	
 		// Wait for vblank
 		swiWaitForVBlank();
 		
