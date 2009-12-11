@@ -250,27 +250,31 @@ int main(void)
 		
 		// checks for left and right movement		(Use L/R and LEFT/RIGHT)
 		
+		b2Vec2 vel = g_spriteArray[0].Body->GetLinearVelocity();
+		
 		if (held & KEY_LEFT)
 		{
-			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(-WALKVEL, g_spriteArray[0].Body->GetLinearVelocity().y));
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(-VELX, vel.y));
+			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(IMPX, 0), b2Vec2(0, 0));
 		}
 		else if (held & KEY_RIGHT)
 		{
-			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(WALKVEL, g_spriteArray[0].Body->GetLinearVelocity().y));
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(VELX, vel.y));
+			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(-IMPX, 0), b2Vec2(0, 0));
 		}
 		else if (held & KEY_UP)
 		{
-			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(0.f, JUMPVEL), b2Vec2(0, 0));
-			//g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(g_spriteArray[0].Body->GetLinearVelocity().x, g_spriteArray[0].Body->GetLinearVelocity().y + JUMPVEL));
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(vel.x, VELY));
+			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(0, IMPY), b2Vec2(0, 0));
 		}
 		else if (held & KEY_DOWN)
 		{
-			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(0.f, -JUMPVEL), b2Vec2(0, 0));
-			//g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(g_spriteArray[0].Body->GetLinearVelocity().x, g_spriteArray[0].Body->GetLinearVelocity().y - JUMPVEL));
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(vel.x, -VELY));
+			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(0, -IMPY), b2Vec2(0, 0));
 		}
 		else
 		{
-			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(0.0f, g_spriteArray[0].Body->GetLinearVelocity().y));
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(0.0f, vel.y));
 		}
 	
 		g_world->Step(timeStep, iterations);
