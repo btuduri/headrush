@@ -25,7 +25,7 @@
 void initBox2D()
 {
 	g_worldAABB = new b2AABB();
-	g_worldAABB->minVertex.Set(- BALLSIZE * SCALE, - BALLSIZE * SCALE);
+	g_worldAABB->minVertex.Set(SCREEN_WIDTH * -SCALE, SCREEN_HEIGHT * -SCALE);
 	g_worldAABB->maxVertex.Set(SCREEN_WIDTH * SCALE, SCREEN_HEIGHT * SCALE);
 	
 	g_gravity = new b2Vec2(0.0f, -10.0f);
@@ -244,6 +244,34 @@ int main(void)
 		
 
 		drawMap();
+		
+		scanKeys();						// Read button data
+		int held = keysHeld();			// Used to calculate if a button is down
+		
+		// checks for left and right movement		(Use L/R and LEFT/RIGHT)
+		
+		if (held & KEY_LEFT)
+		{
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(-WALKVEL, g_spriteArray[0].Body->GetLinearVelocity().y));
+		}
+		else if (held & KEY_RIGHT)
+		{
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(WALKVEL, g_spriteArray[0].Body->GetLinearVelocity().y));
+		}
+		else if (held & KEY_UP)
+		{
+			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(0.f, JUMPVEL), b2Vec2(0, 0));
+			//g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(g_spriteArray[0].Body->GetLinearVelocity().x, g_spriteArray[0].Body->GetLinearVelocity().y + JUMPVEL));
+		}
+		else if (held & KEY_DOWN)
+		{
+			g_spriteArray[0].Body->ApplyImpulse(b2Vec2(0.f, -JUMPVEL), b2Vec2(0, 0));
+			//g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(g_spriteArray[0].Body->GetLinearVelocity().x, g_spriteArray[0].Body->GetLinearVelocity().y - JUMPVEL));
+		}
+		else
+		{
+			g_spriteArray[0].Body->SetLinearVelocity(b2Vec2(0.0f, g_spriteArray[0].Body->GetLinearVelocity().y));
+		}
 	
 		g_world->Step(timeStep, iterations);
 		
@@ -260,7 +288,7 @@ int main(void)
 			oamSet(&oamSub, i, g_spriteArray[i].X - BALLOFFSET, g_spriteArray[i].Y - BALLOFFSET, 0, 0, SpriteSize_32x32, SpriteColorFormat_256Color, g_spriteArray[i].Gfx, i, false, false, false, false, false);
 		};
 		
-		if (keysHeld() & KEY_L)
+		/* if (keysHeld() & KEY_L)
 		{	
 			for(int i=1; i<BALLCOUNT; i++)
 			{
@@ -269,7 +297,7 @@ int main(void)
 			position.y =  192 - ((rand() % 100));		// should this not work?
 			}
 	
-		}
+		} */
 
 	
 		// Wait for vblank
