@@ -107,8 +107,10 @@ struct Sprite							// define the elements that construct our 'balls'
 
 #define		SCALE				0.1F
 
-#define		WALKVEL				5.0F
-#define		JUMPVEL				1.0F
+#define		VELX				5.0F
+#define		VELY				5.0F
+#define		IMPX				0.01F
+#define		IMPY				0.01F
 
 #endif
 
