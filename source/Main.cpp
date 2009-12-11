@@ -222,8 +222,8 @@ int main(void)
 	g_levelY = 0;
 	drawMap();
 
-	float timeStep = 1.0f / 60.0f;
-	int iterations = 2;
+	float timeStep = 1.0f / 30.0f;
+	int iterations = 1;
 	char buffer[20];
 	
 	while(1)
