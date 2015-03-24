@@ -1,0 +1,1 @@
+A demo to work on game mechanics as a way to learn C coding
